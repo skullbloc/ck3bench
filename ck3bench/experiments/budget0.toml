@@ -1,0 +1,82 @@
+# budget0: the full-horizon budget pilot (November 2026): six seats, three
+# game-years, one Sonnet pass and one Opus pass, billed to an API key.
+#
+# As scale0, the pilot ran the ck3agent 2026.11.0 tarball straight through
+# `ck3agent run`, under no registration document. The [episode] and [budget]
+# block keys are DECLARED FOR THE BLOCK, NEVER ARMED: the bridge's compiled-in
+# values where the pilot set nothing, each commented with its source, and a
+# horizon the pilot never declared to the bridge, with the span each episode
+# realised recorded beside it from the pilot's results table. Host values live
+# in the untracked budget0.local.toml beside this file.
+
+[experiment]
+name = "budget0"
+intent = "pilot"
+description = "6 concurrent seats on one 867 game, 18 cycles of ~60 game-days each; 3 Sonnet episodes then 3 Opus episodes; per-seat cost medians per model are the report"
+
+[registration]
+version = "2"                      # the vocabulary in force; the pilot was launched under no document
+
+[toolkit]
+ck3agent = "2026.11.0"
+tarball_sha256 = "dc059ad135bfc5cad346e353383b92fe92c02dc861f00c4e89d0e0dc4ee7a36a"   # the same tarball scale0 installed
+
+[save]
+basename = "_867_01_01.ck3"
+sha256 = "1a08927d4515ebaeb20f528f56430084348556359606ac54d2ba4b47a82bc5be"   # the same save as scale0
+
+[episode]
+mode = "free_play"                 # CK3_EPISODE_MODE unset
+strict_build_id = true             # compiled ON in the public release build
+# Declared for the block, never armed: a three-game-year pilot window
+# (18 cycles x ~60 game-days). Realised (the Sonnet pass): e1 0867.01.01->0875.02.15 (2965 d), e2 ->0875.05.17
+# (3056 d), e3 ->0874.02.07 (2592 d), each past the declared end, because a
+# seat's "wait 60 days" ran as 110-second waits at ~1.1 game-days per second
+# No Opus episode has a results row: the pilot was stopped after e3.
+horizon = ["867.01.03", "870.01.03"]
+game_speed = 2                     # the bridge's compiled-in resting speed
+unavail_exclusion_fraction = 0.05  # the bridge's default; unarmed in the pilot
+
+[seats]
+source = "list"
+# The first 6 of scale0's ordered seat list (same rule, same file).
+ids = [13191, 12015, 11329, 14942, 10647, 13746]
+cycles = 18
+wait_game_days = 60                # the goal text asks for ~60 game-days per cycle, as repeated 110-second waits
+max_turns = 480
+wall_seconds = 4200
+# The one goal, every seat; {name}, {cid}, {others} as in scale0.
+goals = [
+  "You are {name} (character {cid}). Expand: find a declarable war and declare it if one exists; otherwise fabricate a claim. Never target characters {others} (other players). Each cycle, after acting, let about 60 game days pass: call session wait with seconds=110, and call it again if end_date is less than 60 days after the cycle's start date.",
+]
+
+[seats.billing]
+accounts = ["api_key"]             # ANTHROPIC_API_KEY read from key_file into each `ck3agent run`; apiKeySource checked at +75 s and after
+account = "api_key"                # every episode billed to the one allowed account
+key_file = "~/.config/ck3agent/api_key"   # mode 600; the command reads it, never echoes it
+
+# One pass per model, in order; the model is `ck3agent run --model <model>`.
+[[passes]]
+model = "sonnet"
+episodes = 3
+
+[[passes]]
+model = "opus"
+episodes = 3
+
+[budget]
+enforce = false                    # no CK3_BUDGET_* set; the inert pilot lines
+per_agent_per_year = 1
+ceiling_basis = "pilot_placeholder"
+cap_usd = 230                      # stop before an episode when cum + projected episode > cap
+opus_ratio = 2.5                   # the projection for the first Opus episode: the Sonnet median x this
+deadline = "2026-11-09T00:00:00Z"  # stop before an episode that cannot end before the key expires
+
+[tool_surface]
+held_constant = [
+  "cbs", "declare_war", "discover", "do", "inspect", "observe", "pass_turn",
+  "plan_war", "query", "session", "set_phase", "steer", "succession_plan",
+]
+
+[runner]
+memory_floor_gb = 20               # MemAvailable + SwapFree before each episode and sampled during it

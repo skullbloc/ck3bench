@@ -1,0 +1,57 @@
+# ck3bench's build file. The ck3agent pin below is checked against the toolkit
+# release at every export.
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ck3bench"
+dynamic = ["version"]
+description = "The research harness runner over ck3agent: experiments as TOML, sealed bundles, reproducible tables"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.11"
+authors = [{ name = "Harrison Stebbins" }]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Private :: Do Not Upload",
+]
+dependencies = [
+  "ck3agent==2026.12.10",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+ck3bench = "ck3bench.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/skullbloc/ck3bench"
+Toolkit = "https://github.com/skullbloc/ck3agent"
+
+[tool.hatch.version]
+path = "ck3bench/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ck3bench"]
+exclude = ["**/test_*.py", "**/__pycache__", "**/*.local.toml"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/ck3bench", "/tests", "/README.md", "/LICENSE", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/SECURITY.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/VERSION", "/UPSTREAM"]
+exclude = ["**/__pycache__", "**/*.local.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["ck3bench", "tests"]
+# deselected: ck3bench/test_cli.py::test_version_is_the_dev_marker
+#   pins ck3bench/_version.py to the research tree's 0.0.0-dev marker, which the export stamps with the release version
+addopts = "-q -p no:cacheprovider --deselect ck3bench/test_cli.py::test_version_is_the_dev_marker"

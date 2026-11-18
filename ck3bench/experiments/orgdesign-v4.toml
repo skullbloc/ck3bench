@@ -1,0 +1,165 @@
+# orgdesign-v4: does a council of LLM seats grow a CK3 realm more than one LLM king?
+# The declaration the v4 pre-registration's conditions block is generated from
+# ([registration].document, signed from its draft; not signed yet). Three arms
+# (E0, K1, COUNCIL), a NAMED start title (k_france at 1066.9.15), an Opus king and
+# Sonnet dukes, notepads, COUNCIL's complete message topology.
+#
+# Lines the registration still OWES are declared in [pending] (block key -> who
+# fills it) and rendered `KEY=<pending_<filler>>`: the launcher refuses every one
+# at parse, so this registration cannot be frozen or launched until each is filled.
+#
+# Host values live in the untracked orgdesign-v4.local.toml beside this file.
+
+[experiment]
+name = "orgdesign-v4"
+intent = "registered"
+description = "Organisation design of LLM seats in CK3: E0 (unsteered), K1 (an Opus king alone, private notepad), COUNCIL (an Opus king and Sonnet dukes, private notepads, a council notepad, complete messages)"
+
+[registration]
+version = "4"                      # registration.version=4 (1, 2 and 3 superseded, refused by name at parse)
+document = "docs/pre-registration-v4-orgdesign.md"   # the signed document; written at signing, not in this repository
+# sha256 absent: the freeze writes it, never guessed.
+
+[toolkit]
+# The ck3agent release the study runs. The four wrapper pins are that release's files
+# (the seat's prompt, its continuation text, cli.py and _bridge.py) as the cell runner
+# reads them from the installed wheel; a cell that is not dry refuses a toolkit whose
+# files differ.
+ck3agent = "2026.12.10"
+claude_code = ">=2.1"
+run_prompt_md_sha256 = "019a77fc2f82ad1d044efe782e7f5ed3698a8a9ec1c7af46108e91aa41f0da84"
+continuation_text_sha256 = "2c21131eeda5c3e1ea61377678ed05ac269b830fedf95453e051e0cbd614c6bd"
+cli_py_sha256 = "ef47ce361466031edc1d77873705c5e0be921b80abeeda0809dc279818d8115b"
+bridge_py_sha256 = "75dfafdc79c52e3d7d60b81d37b6f611aaee88b51bbf909ae0b6756e4c7c3dc6"
+seat_stop_wait_s = 900             # a bound on a seat's stop, chosen above the observed teardown; not derived
+
+[save]
+# The 1066.9.15 start save: an observer save (no played character) of CK3 1.18.3.1, date and
+# bookmark date 1066.9.15, four active wars; booted live by the census below.
+basename = "_1066_09_15.ck3"
+sha256 = "0c94b59880e0549a5a0c8fbe4dc675a3de171f28d79f7628ad765116de782d5d"
+
+[episode]
+mode = "experiment"
+strict_build_id = true
+horizon_start = "1066.09.15"       # the 1066.9.15 bookmark; the end and the length are pending the pilot
+game_speed = 2                     # the speed pin
+unavail_exclusion_fraction = 0.05
+observer_cadence_min_days = 30     # the meter cadence
+policy_mod = true                  # the standing-policy mod, installed in EVERY arm (E0 too) so the game is the same game across arms
+
+[seats]
+source = "census"                  # the census of the NAMED title, its lines written from a run on the start save
+rule = "named_title_v4"
+title_key = "k_france"             # the registration names the title outright
+n_dukes = 5                        # n = 5; the start history has 6 landed duke vassals
+# The census of k_france on the live start save (ck3agent 2026.12.9, game paused at 1066.09.15).
+# Runtime ids, not file facts (Philippe I's history id is 214).
+king_id = 37067
+king_title_id = 7052
+duke_ids = [31808, 31466, 29249, 29247, 36151]
+realm_counties = 84
+census_freeze = "docs/cleanup-2026.11/evidence/v4pilot/census/census-lines.txt"
+census_freeze_sha256 = "18900a1bc5115db6525bc325532add5b8c3232ce59e1871082d5ec3f3ff18987"
+# cycle_game_days: pending the pilot ([pending] cycle.game_days); the cycle COUNT is never declared,
+# it follows from the horizon.
+
+[seats.model_id]
+# An Opus king in K1 and COUNCIL, Sonnet dukes; the ids are re-read at signing.
+king = "claude-opus-5-5"
+duke = "claude-sonnet-5-5"
+
+[seats.billing]
+accounts = ["subscription", "api_key"]  # a record, never a condition
+account = "subscription"
+key_file = "~/.config/ck3agent/api_key" # emitted as seat.billing.key_file only when account = "api_key"
+
+[channel]
+max_text_bytes = 600               # COUNCIL's complete topology: bytes per message
+quota_per_cycle = 2                # messages per seat per cycle
+
+[notepad]
+private_max_bytes = 4096
+council_max_bytes = 8192
+max_write_bytes = 1024
+
+[guide]
+# The guide every seat is served: every topic page, and per role the play file (the seat's
+# CLAUDE.md) and the goal text (its --goal), each named by sha in the guide's manifest.json;
+# this is that file's sha256.
+manifest_sha256 = "0ccea398c6d891e8bd5b5f2fd976090f55fd274df33b7ac10f74b9c797240572"
+
+[budget]
+# The ceiling per seat per game-year is derived from the v4 pilot: 1.5 x the max over the
+# pilot arms (K1, COUNCIL) of their median. Both lines are pending the pilot ([pending]).
+enforce = true
+
+[tool_surface]
+# The 13 game tools, held constant in every arm.
+held_constant = [
+  "cbs", "declare_war", "discover", "do", "inspect", "observe", "pass_turn",
+  "plan_war", "query", "session", "set_phase", "steer", "succession_plan",
+]
+channel_arms_add = ["msg_send"]               # COUNCIL's complete topology
+notepad_arms_add = ["note_read", "note_write"]   # the arms with a pad (K1, COUNCIL)
+guide_arms_add = ["guide_read"]               # the guide, every seated arm
+
+[runner]
+memory_floor_gb = 20
+per_seat_gb = 0.5
+growth_gb = 1.0
+timeout_pct_max = 5
+
+[run_order]
+# Blocks of three, one episode of each arm (E0, K1, COUNCIL) per block in the seed's order;
+# E0 runs inside the registered blocks like the others, and N is equal per arm: the number of
+# blocks (floor 8, cap 12), not declared until it is fixed. Unsteered episodes run before the
+# registration are a variance pilot, not registered members. The seed is pending.
+
+[pending]
+"CK3_EPISODE_HORIZON_END" = "pilot"
+"horizon.game_years" = "pilot"
+"cycle.game_days" = "pilot"
+"CK3_BUDGET_PER_AGENT_PER_YEAR" = "pilot"
+"budget.ceiling_basis" = "pilot"
+"run_order.seed" = "freeze"
+
+# ── the cells. One table per arm; the table's name is the launcher's arm. A steered seat
+# boots its ROLE's play file and goal text from [guide] (K the king's, D1..Dn the duke's);
+# a cell names no file.
+
+[cells.e0]
+arm = "E0"
+description = "the game's own AI: nobody steered"
+topology = "none"
+notepad = "none"
+# episodes: N per arm, equal across the three arms, not declared until fixed
+king = "native"
+duke = "native"
+king_steered = false
+dukes_steered = false
+exploratory = false
+
+[cells.k1]
+arm = "K1"
+description = "an Opus king alone with a private notepad; dukes native; no messages"
+topology = "none"
+notepad = "private"
+# episodes: N per arm
+king = "king"
+duke = "native"
+king_steered = true
+dukes_steered = false
+exploratory = false
+
+[cells.council]
+arm = "COUNCIL"
+description = "an Opus king and n Sonnet dukes: private notepads, one council notepad, complete messages"
+topology = "complete"
+notepad = "private,council"
+# episodes: N per arm
+king = "king"
+duke = "duke"
+king_steered = true
+dukes_steered = true
+exploratory = false

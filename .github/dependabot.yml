@@ -1,0 +1,10 @@
+version: 2
+updates:
+  # The workflows' actions are pinned by commit sha; this keeps the pins current.
+  # No pip ecosystem: the one runtime dependency is ck3agent at an exact version,
+  # a release asset rather than an index package, moved by the release export.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    groups:
+      actions: { patterns: ["*"] }

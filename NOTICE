@@ -1,0 +1,13 @@
+ck3bench
+Copyright 2026 Harrison Stebbins and ck3bench contributors
+Published by skullbloc (https://github.com/skullbloc)
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+ck3bench depends on ck3agent (https://github.com/skullbloc/ck3agent),
+Apache-2.0, at the version pyproject.toml pins; it carries none of its code.
+
+Crusader Kings and Paradox Interactive are registered trademarks of Paradox
+Interactive AB; Claude is a trademark of Anthropic, PBC. This project is not
+affiliated with or endorsed by either. It contains no game assets and no game
+code.

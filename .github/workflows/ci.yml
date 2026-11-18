@@ -1,0 +1,96 @@
+name: CI
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Modelled on ck3agent's ci.yml without its bridge jobs: ck3bench has no
+# bridge. It depends on the ck3agent wheel at the version pyproject.toml pins;
+# that wheel is a ck3agent release asset, installed before the package so pip
+# does not look for it on an index.
+
+jobs:
+  python:
+    name: python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install the pinned ck3agent wheel (a release asset), then the package
+        run: |
+          pin=$(python -c 'import tomllib,re; d=tomllib.load(open("pyproject.toml","rb"))["project"]["dependencies"]; print([re.match(r"ck3agent==(\S+)$", x).group(1) for x in d if x.startswith("ck3agent")][0])')
+          echo "ck3agent pin: $pin"
+          python -m pip install --upgrade pip
+          python -m pip install "https://github.com/skullbloc/ck3agent/releases/download/v$pin/ck3agent-$pin-py3-none-any.whl"
+          python -m pip install -e ".[test]"
+          test "$(python -c 'import ck3agent; print(ck3agent.__version__)')" = "$pin"
+      - name: Unit tests (package suite + tests/)
+        run: python -m pytest
+      - name: The three example experiments pass `experiment check`
+        run: |
+          test "$(ck3bench --version)" = "ck3bench $(cat VERSION)"
+          for e in scale0 budget0 orgdesign-v4; do ck3bench experiment check "ck3bench/experiments/$e.toml"; done
+
+  package:
+    name: wheel (python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    needs: [python]
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13", "3.14"]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install build==1.6.1 hatchling==1.32.4
+      - run: python -m build --no-isolation
+      - name: Smoke the installed wheel in a clean venv
+        run: |
+          pin=$(python -c 'import tomllib,re; d=tomllib.load(open("pyproject.toml","rb"))["project"]["dependencies"]; print([re.match(r"ck3agent==(\S+)$", x).group(1) for x in d if x.startswith("ck3agent")][0])')
+          python -m venv "$RUNNER_TEMP/v"
+          V="$RUNNER_TEMP/v/bin"
+          "$V/pip" install -q "https://github.com/skullbloc/ck3agent/releases/download/v$pin/ck3agent-$pin-py3-none-any.whl"
+          "$V/pip" install -q dist/*.whl
+          cd "$RUNNER_TEMP"   # leave the checkout so the installed package is the one imported
+          test "$(cat "$GITHUB_WORKSPACE/VERSION")" = "$("$V/python" -c 'import ck3bench; print(ck3bench.__version__)')"
+          "$V/ck3bench" --version
+          # the examples ship in the wheel
+          "$V/ck3bench" experiment check "$("$V/python" -c 'import ck3bench, pathlib; print(pathlib.Path(ck3bench.__file__).parent / "experiments/scale0.toml")')"
+      - if: matrix.python == '3.12'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: python-dist
+          path: dist/
+          retention-days: 7
+
+  dco:
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Every PR commit carries Signed-off-by
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"; head="${{ github.event.pull_request.head.sha }}"
+          bad=$(git log --format='%H %s' "$base..$head" --invert-grep --grep='^Signed-off-by: ' || true)
+          if [ -n "$bad" ]; then echo "::error::commits without Signed-off-by:"; echo "$bad"; exit 1; fi

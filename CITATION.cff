@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use ck3bench in research, please cite it as below."
+title: "ck3bench: the research harness runner over ck3agent"
+type: software
+authors:
+  - family-names: Stebbins
+    given-names: Harrison
+version: 2026.11.0-dev0
+# date-released is stamped at the first release (tests/test_release_metadata.py
+# requires it for a release version and forbids it for a -dev one)
+license: Apache-2.0
+repository-code: "https://github.com/skullbloc/ck3bench"
+url: "https://github.com/skullbloc/ck3bench"
+keywords:
+  - large language models
+  - game AI
+  - Crusader Kings III
+  - experiments
+  - reproducibility
+abstract: >-
+  ck3bench runs experiments over ck3agent, an LLM agent that steers Crusader
+  Kings III's native AI: an experiment is one TOML file, the registration's
+  conditions block is generated from it, and runs produce sealed bundles and
+  reproducible tables.
