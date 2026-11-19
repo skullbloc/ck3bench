@@ -6,36 +6,21 @@ prefix. No version has been released yet.
 
 ## 2026.11.0-dev0 — unreleased
 
-The first public tree.
+The first version: Crusader Kings III as an environment for LLM agents.
 
-* **The experiment file.** `ck3bench.experiment`: an experiment is one TOML
-  file, every key typed and named in a schema, nothing defaulted. The
-  registration's conditions block is generated from it
-  (`to_conditions_block`) and a frozen document's block is checked against it
-  key by key (`check_block`). Host-specific values live only in an untracked
-  `<name>.local.toml`; a tracked file naming a host path, a host key or a host
-  name the overlay forbids is refused. Lines a registration still owes are
-  declared in `[pending]` and rendered as placeholders the launcher refuses.
-* **The CLI.** `ck3bench experiment check` loads a file, prints what it
-  declares beside what it observed (the installed ck3agent version, the
-  registration document under `--tree`), prints the generated block
-  (`--print-block`) and runs the mirror check (`--block`). A document marked
-  `TEMPLATE - NOT FROZEN` is refused. Every other subcommand (`census`,
-  `freeze`, `pilot`, `run`, `collect`, `report`, `verify`) refuses
-  `not_implemented`, naming the milestone that brings it.
-* **The examples.** `orgdesign-v4.toml`, the organisation-design study (arms
-  E0, K1, COUNCIL on k_france at 1066.9.15; pre-registration not signed, six
-  lines pending the pilot and the freeze); its generated pilot variants
-  `orgdesign-v4-pilot.toml`, `orgdesign-v4-pilot25.toml` and
-  `orgdesign-v4-pilot-e0var100.toml`; and the two earlier pilots `scale0.toml`
-  and `budget0.toml`, declared as they ran.
-* **The toolkit pin.** Depends on ck3agent at exactly `2026.12.10`;
-  `orgdesign-v4.toml` declares that release and the sha256 of the four wrapper
-  files a seat runs under, read from its wheel.
-* **The repository.** Apache-2.0 (`LICENSE`, `NOTICE`, `CITATION.cff`),
-  `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, CI on Python 3.11 to
-  3.14 with actions pinned by commit sha, and tests that keep the tree public:
-  no host path, personal email address or internal work label in any file
-  (`tests/test_public_tree.py`), every relative link and anchor resolves
-  (`tests/test_links.py`), and the README lists every refusal code and every
-  research-tree path a shipped file names (`tests/test_readme.py`).
+* A parallel multi-agent environment (PettingZoo's parallel shape; seats are
+  agents) and a Gymnasium-shaped one-seat view. Actions are typed tool calls
+  on ck3agent's 13 public game tools; one step is one decision cycle of N
+  game-days with the game paused while the seats act; rewards are declared
+  terms read from game state; truncations are typed, and a failed step's
+  reward is NaN, never 0.
+* Two backends: the real game through ck3agent (pinned at exactly
+  `2026.12.11`), and a deterministic fake world for tests and policy wiring.
+* Four France 1066 tasks (2 to 10 game-years, one with six seats) and three
+  fake tasks, declared by one strict reader that also reads task TOML files.
+* Environment-owned messages and notepads, and team rewards.
+* Seeded random, scripted and no-op policies, a provider-neutral tool-calling
+  agent with an optional Anthropic adapter, an HTTP+JSON env server, a
+  mixed-policy runner, and an MCP shim for a Claude Code seat.
+* A JSONL trajectory format (`ck3bench.trajectory/2`) and its checker.
+* A baseline of eight unsteered 100-game-year games from the 1066 France start.

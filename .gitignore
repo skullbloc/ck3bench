@@ -6,7 +6,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
-# the untracked host overlay beside each experiment (ck3bench/experiment.py)
-ck3bench/experiments/*.local.toml
-# run directories
+# run directories and trajectories written by the quickstart
 runs/
+*.jsonl

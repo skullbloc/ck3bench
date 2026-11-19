@@ -1,5 +1,4 @@
-# ck3bench's build file. The ck3agent pin below is checked against the toolkit
-# release at every export.
+# ck3bench's build file. ck3bench depends on ck3agent at one exact version.
 [build-system]
 requires = ["hatchling>=1.25"]
 build-backend = "hatchling.build"
@@ -7,7 +6,7 @@ build-backend = "hatchling.build"
 [project]
 name = "ck3bench"
 dynamic = ["version"]
-description = "The research harness runner over ck3agent: experiments as TOML, sealed bundles, reproducible tables"
+description = "Crusader Kings III as an environment for LLM agents: seats as agents, typed tool-call actions, rewards from game state"
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE", "NOTICE"]
@@ -26,11 +25,13 @@ classifiers = [
   "Private :: Do Not Upload",
 ]
 dependencies = [
-  "ck3agent==2026.12.10",
+  "ck3agent==2026.12.11",
 ]
 
 [project.optional-dependencies]
 test = ["pytest>=8"]
+# the optional Anthropic adapter (ck3bench.env.anthropic_model); never called by the tests
+anthropic = ["anthropic>=0.40"]
 
 [project.scripts]
 ck3bench = "ck3bench.cli:main"
@@ -47,11 +48,9 @@ packages = ["ck3bench"]
 exclude = ["**/test_*.py", "**/__pycache__", "**/*.local.toml"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/ck3bench", "/tests", "/README.md", "/LICENSE", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/SECURITY.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/VERSION", "/UPSTREAM"]
+include = ["/ck3bench", "/tests", "/docs", "/README.md", "/LICENSE", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/SECURITY.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/VERSION", "/UPSTREAM"]
 exclude = ["**/__pycache__", "**/*.local.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["ck3bench", "tests"]
-# deselected: ck3bench/test_cli.py::test_version_is_the_dev_marker
-#   pins ck3bench/_version.py to the research tree's 0.0.0-dev marker, which the export stamps with the release version
-addopts = "-q -p no:cacheprovider --deselect ck3bench/test_cli.py::test_version_is_the_dev_marker"
+addopts = "-q -p no:cacheprovider"

@@ -4,12 +4,12 @@
 
 ## Tests run
 
-<!-- `python -m pytest`, and `ck3bench experiment check` on the examples you touched. Paste the tail of the output. -->
+<!-- `python -m pytest`, and the `ck3bench env` commands your change touches. Paste the tail of the output. -->
 
-## Touches an experiment file or the schema
+## Touches a task, a reward, the trajectory format or the baseline file
 
 - [ ] No
-- [ ] Yes. The conditions block it generates (`ck3bench experiment check <file> --print-block`) is pasted below, before and after.
+- [ ] Yes. What a policy, a trajectory reader or a baseline reading sees differently is described above.
 
 ## Changelog
 

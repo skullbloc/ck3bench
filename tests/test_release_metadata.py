@@ -1,9 +1,7 @@
 """The version agrees everywhere a user or a citation reads it, and the toolkit is pinned exactly.
 
-Adapted from ck3agent's test of the same name. There CITATION.cff always
-carries date-released and it must equal the CHANGELOG date; here a -dev
-version is never released, so its citation carries no date and its CHANGELOG
-heading says unreleased, and a release version carries both, equal.
+A -dev version is never released: its citation carries no date-released and
+its CHANGELOG heading says unreleased. A release version carries both, equal.
 """
 import re
 import tomllib
@@ -68,3 +66,9 @@ def test_the_toolkit_is_pinned_to_one_exact_ck3agent_version():
     deps = _pyproject()["project"]["dependencies"]
     pins = [d for d in deps if d.strip().startswith("ck3agent")]
     assert len(pins) == 1 and re.fullmatch(r"ck3agent==\d{4}\.\d{1,2}\.\d+", pins[0].strip()), pins
+
+
+def test_the_optional_extras_are_test_and_anthropic():
+    extras = _pyproject()["project"]["optional-dependencies"]
+    assert set(extras) == {"test", "anthropic"}
+    assert [d.split(">")[0].split("=")[0].strip() for d in extras["anthropic"]] == ["anthropic"]

@@ -1,14 +1,12 @@
 # Contributing
 
-## 1. Where this repo comes from
+## 1. How a pull request lands
 
-This repository is exported from a research tree; `UPSTREAM` names the source
-commit. Your merged PR is carried upstream by the maintainer (`ported`),
-adapted (`superseded`) or, rarely, dropped with a reason (`reverted`); the next
-export commit names each PR in its trailers and credits you with
-`Co-authored-by:`. The sync tooling identifies the release bot by name and
-email, which anyone can type, so a PR containing a commit authored as the bot
-is not merged. Merges here are merge commits, never squashes.
+This repository is generated from the maintainer's development tree (`UPSTREAM`
+names the commit). A merged pull request is carried into that tree, and the
+next sync commit here names it and credits you with `Co-authored-by:`. Merges
+here are merge commits, never squashes. A pull request containing a commit
+authored as the release bot is not merged.
 
 ## 2. Dev setup
 
@@ -20,31 +18,31 @@ pip install -e ".[test]"
 python -m pytest
 ```
 
-Python 3.11 to 3.14. No game is needed for anything in this repository.
+Python 3.11 to 3.14. No game is needed for the tests or the fake backend; the real backend needs
+your own copy of the game (README, "Running on the real game").
 
 ## 3. Tests
 
 * Tests sit beside the module they test (`ck3bench/test_*.py`) and in `tests/`.
-* `pyproject.toml` deselects the upstream test ids that pin research-tree
-  facts; each one is listed, with its reason, in a comment above `addopts`.
-* A new refusal code needs a row in the README's refusal table
+* A new refusal code needs a row in the table of `docs/reference.md`
   (`tests/test_readme.py` enumerates them from the code).
-* No file may name a machine, a home directory or a personal email address
-  (`tests/test_public_tree.py`).
+* No file may name a machine, a home directory or a personal email address,
+  or carry a work label or an unfinished-work marker (`tests/test_public_tree.py`).
 
-## 4. Experiment files
+## 4. Tasks, rewards and the trajectory format
 
-An experiment is one TOML file and nothing defaults. Change the schema in
-`ck3bench/experiment.py` and the examples together, and paste the conditions
-block before and after (`ck3bench experiment check <file> --print-block`) in
-the PR. Host-specific values go in an untracked `<name>.local.toml`, never in a
-tracked file.
+A task is one declaration (`ck3bench/env/scenario.py`, or a TOML file read by
+the same reader) and nothing defaults. A change to a task, a reward term, the
+trajectory format or the baseline file changes what an existing policy or
+reader sees: say what in the PR, and keep the README's task and baseline tables
+and the reference's code table in step (`tests/test_readme.py` checks all three).
+Nothing measured is filled in: a value the game or the baseline did not read
+is `null` beside a status.
 
 ## 5. Style
 
 Match the surrounding code. One concern per PR. No reformat-only or
-rename-only PRs: the export overwrites files shared with upstream, and the
-churn is lost.
+rename-only PRs.
 
 ## 6. Review process
 

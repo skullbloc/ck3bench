@@ -1,68 +1,160 @@
-"""The README names every refusal the code can emit and every milestone the CLI names.
+"""The README and docs/reference.md are checked against the code they describe.
 
-Enumerated from the code (`ck3bench.experiment` R_*, `ck3bench.cli`), so a
-refusal added without a README row reds here; an empty enumeration is a red
-too (fail open).
+* every refusal and episode-end code the package can emit is named in the
+  reference's table (enumerated from the modules, so a code added without a
+  row reds here; an empty enumeration is a red too), and every code the table
+  names is one the code has;
+* every built-in task is in the README's task table with its declared status;
+* the baseline table agrees with the shipped baseline file;
+* the quickstart's `ck3bench env` lines and the ten-line API block run;
+* every repo-relative path a shipped file names exists here (a `ck3agent/`
+  path names the toolkit package this one depends on).
 """
+import importlib
+import pkgutil
 import re
+import shlex
 from pathlib import Path
 
-from ck3bench import cli, experiment
+import ck3bench.env as env_pkg
+from ck3bench import cli
+from ck3bench.env import baselines
+from ck3bench.env.scenario import BUILTIN_DICTS, builtin
+from ck3bench.env.trajectory import check_trajectory, read_trajectory
 
 ROOT = Path(__file__).resolve().parents[1]
+#: refusals (R_), episode ends (TRUNC_, TERM_), turn ends (T_), message and notepad verdicts (V_)
+CODE_NAME = re.compile(r"^(R|TRUNC|TERM|T|V)_[A-Z0-9_]+$|_ERR_[A-Z0-9_]+$")
 
 
 def _readme() -> str:
     return (ROOT / "README.md").read_text(encoding="utf-8")
 
 
-def _refusal_codes() -> set[str]:
-    codes = {v for k, v in vars(experiment).items() if k.startswith("R_") and isinstance(v, str)}
-    codes.add(cli.R_NOT_IMPLEMENTED)
-    return codes
+def _reference() -> str:
+    return (ROOT / "docs" / "reference.md").read_text(encoding="utf-8")
 
 
-def test_the_readme_names_every_refusal_code():
-    codes = _refusal_codes()
-    assert len(codes) >= 15, codes
-    text = _readme()
-    missing = sorted(c for c in codes if f"`{c}`" not in text)
-    assert missing == [], missing
-
-
-def test_the_readme_names_every_milestone_and_no_lane_label():
-    text = _readme()
-    for m in cli.MILESTONES:
-        assert f"`{m}`" in text, m
-    assert not re.search(r"\blane K[1-6]\b", text) and not re.search(r"\| K[1-6]\b", text)
-
-
-def test_the_readme_names_the_research_tree_references_the_shipped_files_carry():
-    text = _readme()
-    assert "## References that live in the research tree" in text
-    for ref in ("docs/pre-registration-v4-orgdesign.md", "census-lines.txt"):
-        assert ref in text, ref
-
-
-# A repo-relative path some shipped file names: research-tree roots, and the
-# ck3agent package's. Not inside a URL or a longer path (no `/` or word char before).
-REF = re.compile(r"(?<![\w/.-])((?:docs|scripts|release|ck3agent|ck3bench)/[A-Za-z0-9_.*/-]*[A-Za-z0-9_*/])")
-SKIP = {".git", "dist", "build", "__pycache__", ".pytest_cache", ".venv"}
-
-
-def _section(text: str) -> str:
-    start = text.index("## References that live in the research tree")
+def _section(text: str, heading: str) -> str:
+    start = text.index(heading)
     end = text.find("\n## ", start + 1)
     return text[start:] if end < 0 else text[start:end]
 
 
+def _fence(section: str, lang: str) -> str:
+    m = re.search(rf"```{lang}\n(.*?)```", section, re.S)
+    assert m, f"no ```{lang} block"
+    return m.group(1)
+
+
+def _codes() -> dict[str, str]:
+    """{code: module} over every shipped module of ck3bench.env."""
+    out: dict[str, str] = {}
+    for info in pkgutil.iter_modules(env_pkg.__path__):
+        if info.name.startswith("test_"):
+            continue
+        mod = importlib.import_module(f"ck3bench.env.{info.name}")
+        for k, v in vars(mod).items():
+            if CODE_NAME.search(k) and isinstance(v, str):
+                out.setdefault(v, info.name)
+    return out
+
+
+def test_the_reference_names_every_code():
+    codes = _codes()
+    assert len(codes) >= 70, codes
+    text = _section(_reference(), "## Refusals and end codes")
+    missing = sorted(f"{c} ({m})" for c, m in codes.items() if f"`{c}`" not in text)
+    assert missing == [], missing
+
+
+def test_every_code_the_reference_tables_is_one_the_code_has():
+    """The reverse: a code the table names that no module defines is a stale row."""
+    codes = _codes()
+    table = _section(_reference(), "## Refusals and end codes")
+    rows = [ln for ln in table.splitlines() if ln.startswith("| ") and not ln.startswith("| leg")]
+    named = {c for ln in rows for c in re.findall(r"`([a-z_0-9]+)`", ln.split("|")[2])}
+    assert len(named) >= 70
+    assert sorted(named - set(codes)) == []
+
+
+def test_the_external_seat_commands_parse():
+    """The Claude Code route's two commands (the play line and the shim's MCP
+    config) are accepted by the CLI as written."""
+    import json
+    sec = _section(_readme(), "## Several seats, agents and the runner")
+    play = [shlex.split(ln.strip()) for ln in _fence(sec, "bash").splitlines()
+            if ln.strip().startswith("ck3bench env play")]
+    cfg = json.loads(_fence(sec, "json"))
+    shim = next(iter(cfg["mcpServers"].values()))
+    assert play and shim["command"] == "ck3bench"
+    p = cli.build_parser()
+    a = p.parse_args(play[0][1:])
+    assert a.external == ["king"] and a.env_fn.__name__ == "cmd_play"
+    b = p.parse_args(shim["args"])
+    assert b.env_fn.__name__ == "cmd_shim" and b.seat == "king" and str(a.port) in b.url
+
+
+def test_every_builtin_task_is_in_the_table_with_its_status():
+    table = _section(_readme(), "## Tasks")
+    assert len(BUILTIN_DICTS) >= 5
+    for name in BUILTIN_DICTS:
+        sc = builtin(name)
+        row = next((ln for ln in table.splitlines() if ln.startswith(f"| `{name}` |")), None)
+        assert row is not None, name
+        want = "runs (fake backend)" if sc.backend == "fake" else "not run live"
+        assert want in row, (name, sc.status, row)
+        assert f"{sc.n_steps} x {sc.cycle_days}" in row, (name, row)
+
+
+def test_the_baseline_table_is_the_shipped_file():
+    sec = _section(_readme(), "## Baselines")
+    rows = {ln.split("|")[1].strip(): [c.strip() for c in ln.strip().strip("|").split("|")[1:]]
+            for ln in sec.splitlines() if ln.startswith("|")}
+    years = [int(y) for y in rows["game-years"]]
+    b = baselines.load_baseline()
+    assert b.games == 8 and "**eight**" in sec and len(years) >= 4
+    for i, y in enumerate(years):
+        s = baselines.summarize(b.mark(y).counties)
+        assert abs(float(rows["mean"][i]) - s["mean"]) <= 0.05 + 1e-9, (y, rows["mean"][i], s["mean"])
+        assert abs(float(rows["sample SD"][i]) - s["sd"]) <= 0.05 + 1e-9, (y, rows["sample SD"][i], s["sd"])
+        assert int(rows["games under 10"][i]) == s["under_10"], y
+
+
+def test_the_quickstart_env_lines_run(tmp_path, capsys, monkeypatch):
+    block = _fence(_section(_readme(), "## Quickstart"), "bash")
+    lines = [ln.split("#")[0].strip() for ln in block.splitlines()]
+    env_lines = [shlex.split(ln) for ln in lines if ln.startswith("ck3bench env ")]
+    assert len(env_lines) >= 4, env_lines          # non-vacuous: the block still carries its commands
+    monkeypatch.chdir(tmp_path)
+    for argv in env_lines:
+        rc = cli.main(argv[1:])
+        out = capsys.readouterr().out
+        assert rc == 0, (argv, out)
+    assert check_trajectory(read_trajectory(tmp_path / "traj.jsonl")) == []
+
+
+def test_the_ten_line_api_block_runs(tmp_path, monkeypatch):
+    code = _fence(_section(_readme(), "## The API in ten lines"), "python")
+    assert len(code.strip().splitlines()) <= 10
+    monkeypatch.chdir(tmp_path)
+    exec(compile(code, "README.md", "exec"), {})                       # noqa: S102
+    recs = read_trajectory(tmp_path / "t.jsonl")
+    assert check_trajectory(recs) == [] and recs[-1]["reason"] == "horizon" and recs[0]["fake"] is True
+
+
+# A repo-relative path some shipped file names. Not inside a URL or a longer path
+# (no `/` or word character before it).
+REF = re.compile(r"(?<![\w/.-])((?:docs|scripts|release|ck3agent|ck3bench|tests)/[A-Za-z0-9_.*/-]*[A-Za-z0-9_*/])")
+SKIP = {".git", "dist", "build", "__pycache__", ".pytest_cache", ".venv"}
+
+
 def _named_paths() -> dict[str, str]:
-    """{path: first file naming it} over every shipped file but the README,
-    .gitignore (its lines are patterns, not references) and the export's marker."""
     named: dict[str, str] = {}
     for p in sorted(ROOT.rglob("*")):
         rel = p.relative_to(ROOT)
-        if not p.is_file() or rel.as_posix() in ("README.md", ".gitignore", ".ck3bench-export") or any(
+        # UPSTREAM is the export's provenance record (it names the generator by design)
+        if not p.is_file() or rel.as_posix() in (".gitignore", ".ck3bench-export", "UPSTREAM") or any(
                 s in SKIP or s.endswith(".egg-info") for s in rel.parts):
             continue
         text = p.read_bytes().decode("utf-8", "replace")
@@ -75,21 +167,14 @@ def _present(path: str) -> bool:
     return any(ROOT.glob(path)) if "*" in path else (ROOT / path).exists()
 
 
-def _listed(path: str, section: str) -> bool:
-    if path.startswith("ck3agent/"):
-        return "paths under `ck3agent/`" in section
-    parts = path.split("/")
-    # the path itself, or a parent of at least two segments the section names
-    return any("/".join(parts[:k]) in section for k in range(len(parts), 1, -1))
-
-
-def test_every_research_tree_path_a_shipped_file_names_is_listed_in_the_readme():
-    section = _section(_readme())
+def test_every_path_a_shipped_file_names_is_here():
     named = _named_paths()
-    absent = {p: f for p, f in named.items() if not _present(p)}
-    # non-vacuous: the study's declared document and census freeze are research-tree
-    # paths the walk must find, so an empty walk cannot pass
-    assert {"docs/pre-registration-v4-orgdesign.md",
-            "docs/cleanup-2026.11/evidence/v4pilot/census/census-lines.txt"} <= set(absent), absent
-    unlisted = sorted(f"{f}: {p}" for p, f in absent.items() if not _listed(p, section))
-    assert unlisted == [], unlisted
+    # non-vacuous: the README names the reference and the baseline file, which are here
+    assert {"docs/reference.md", "ck3bench/env/baselines_france1066.json"} <= set(named), sorted(named)
+    absent = sorted(f"{f}: {p}" for p, f in named.items() if not _present(p) and not p.startswith("ck3agent/"))
+    assert absent == []
+
+
+def test_the_cli_is_the_environment_alone():
+    sub = next(a for a in cli.build_parser()._actions if a.dest == "cmd")
+    assert set(sub.choices) == {"env"}
