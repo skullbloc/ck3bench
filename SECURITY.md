@@ -1,8 +1,9 @@
 # Security
 
-ck3bench reads experiment files and documents you point it at and prints what
-it found. This page states what it protects, what it does not, and how to
-report a problem.
+ck3bench is an environment: it runs episodes on a fake in-process world or,
+through ck3agent, on your own copy of Crusader Kings III, and it can serve an
+environment over HTTP. This page states what it protects, what it does not,
+and how to report a problem.
 
 ## Supported versions
 
@@ -11,25 +12,27 @@ report a problem.
 | the latest commit on `main` (no release has been cut yet) | yes |
 | anything older | no: update |
 
-In scope: the `ck3bench` package and CLI, the example experiment files, and
-this repository's CI workflow. The game, the model and the agent that plays
+In scope: the `ck3bench` package and CLI, the environment server, the shipped
+baseline file, and this repository's CI workflow. The game, the model and the agent that plays
 are ck3agent's: report those to
 [ck3agent](https://github.com/skullbloc/ck3agent/security/advisories/new).
 
 ## Threat model
 
-- **No network, no game, no model.** `ck3bench experiment check` opens the
-  TOML file you name, the registration document under `--tree`, and the
-  frozen document you pass with `--block`; it reads ck3agent's installed
-  version from the package metadata. It starts no process and opens no
-  connection.
-- **Experiment files are data.** They are parsed with `tomllib`; nothing in
-  them is executed. Every key is typed; an unknown key is refused.
-- **No secrets in tracked files.** An experiment can name where a key file
-  lives (`[seats.billing] key_file`), never a key. A tracked experiment that
-  carries a path under `/home`, `/mnt` or `/tmp`, or a host name you declare
-  in the untracked `<name>.local.toml`, is refused
-  (`host_path_in_tracked_file`). Keep host values in that untracked overlay.
+- **The env server has no authentication.** `ck3bench env serve` binds
+  loopback (127.0.0.1) and refuses any other address (`remote_bind_refused`)
+  unless you pass `--allow-remote`; anyone who can reach the port can drive
+  the game it serves. Put it behind your own authenticated transport if you
+  expose it.
+- **The fake backend, `scenarios`, `check` and `baseline` open no connection
+  and start no process.** `run` and `serve` on a real task start the game
+  through ck3agent (`ck3agent launch`) and talk to its bridge over a local
+  socket; they kill only the game they started, after re-reading its identity.
+- **Declarations are data.** Task files are parsed with `tomllib`, trajectory
+  and baseline files with `json`; nothing in them is executed. Every key is
+  typed; an unknown key is refused.
+- **No secrets.** ck3bench reads no API key; a policy that calls a model holds
+  its own credentials.
 - **CI.** The workflow runs with a read-only token, uses no repository
   secrets and no self-hosted runner, and pins every action by commit sha.
 

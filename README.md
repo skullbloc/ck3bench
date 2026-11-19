@@ -1,170 +1,199 @@
 # ck3bench
 
-The research harness over [ck3agent](https://github.com/skullbloc/ck3agent),
-the toolkit that lets Claude play Crusader Kings III by steering the game's own
-AI. ck3agent plays; ck3bench declares the experiments. An experiment is one
-TOML file, every key typed and named in a schema, nothing defaulted; the
-pre-registration's conditions block is generated from that file and checked
-against the frozen document key by key.
+Crusader Kings III as an environment for LLM agents.
 
-## Status
+Each agent is a **seat**: a ruler in a running game. An action is a list of
+typed tool calls on the 13 public game tools of
+[ck3agent](https://github.com/skullbloc/ck3agent), the toolkit that reads and
+writes the game through a bridge loaded into it. Observations are JSON;
+rewards are read from game state (realm counties, gold, prestige, whether the
+line survives). One step is one decision cycle: the game is paused while the
+seats act, then the clock runs N game-days and stops.
 
-**A research harness, and the experiment it was built for has not been run.**
+Any policy can drive a seat: a model from any provider, a script, or none (an
+empty action leaves the seat to the game's own AI: the baseline). The API has
+PettingZoo's parallel shape and a Gymnasium-shaped one-seat view; an HTTP
+server serves policies in other languages; seats can message each other, and a
+team can be paid by one seat's result. A deterministic **fake backend** runs
+all of it with no game, and every record it writes says `fake: true`.
 
-* What this version does is check experiment files (`ck3bench experiment check`).
-  The subcommands that would run a study exist and refuse `not_implemented`,
-  naming the milestone that brings them ([below](#not-yet-implemented)).
-* The organisation-design study (`orgdesign-v4.toml`) is declared here, but its
-  pre-registration is **not signed**: the file's `[pending]` table lists the
-  lines it still owes (the horizon's end and length, the decision cycle, the
-  budget ceiling, the run-order seed), and no result of that study exists.
-* The pilot files record pilots that did run (`scale0.toml`, `budget0.toml`, and
-  the generated v4 pilot variants). Their result tables are not published here.
+## Quickstart (fake backend, no game, about a minute)
 
-## What it needs
-
-* To check experiment files (everything this version does): Linux or another
-  POSIX system with Python 3.11 to 3.14, and the ck3agent wheel at the pinned
-  version. No game, no model account, no cost.
-* To run a study (not in this version): everything ck3agent needs, namely your
-  own copy of Crusader Kings III at the build ck3agent supports (its
-  `docs/supported-versions.md`), and Claude, through a Claude subscription or
-  an Anthropic API key. Seats are billed by the model provider: the pilots
-  declared caps of USD 40 (`scale0.toml`) and USD 230 (`budget0.toml`), and a
-  study multiplies seats, game-years and episodes, so expect costs of that
-  order or more per arm. ck3bench ships no game files and no keys.
-
-## Install, and check the examples
-
-ck3bench depends on the ck3agent wheel at one exact version (`pyproject.toml`),
-a ck3agent release asset; install it first:
+Linux (or another POSIX system) with Python 3.11 to 3.14. ck3bench depends on
+the ck3agent wheel at one exact version (`pyproject.toml`), a ck3agent release
+asset; install it first:
 
 ```bash
-pip install https://github.com/skullbloc/ck3agent/releases/download/v2026.12.10/ck3agent-2026.12.10-py3-none-any.whl
+python3 -m venv .venv && . .venv/bin/activate
+pip install https://github.com/skullbloc/ck3agent/releases/download/v2026.12.11/ck3agent-2026.12.11-py3-none-any.whl
 pip install -e ".[test]"
-for e in scale0 budget0 orgdesign-v4; do ck3bench experiment check "ck3bench/experiments/$e.toml"; done
-ck3bench experiment check ck3bench/experiments/scale0.toml --print-block      # the generated conditions block
-ck3bench experiment check ck3bench/experiments/scale0.toml --block FROZEN.md  # agree with a frozen document, or refuse by key
-python -m pytest                                                             # the package tests and tests/
+ck3bench env scenarios                                     # the tasks, each with its status
+ck3bench env run fake-duel --seed 1 --policy random --out traj.jsonl
+ck3bench env check traj.jsonl                              # the trajectory file's shape
+ck3bench env play fake-council --seed 1 --seat king=agent-scripted --seat duke1=noop --seat duke2=random --turn-timeout-s 30 --out play.jsonl
+ck3bench env check play.jsonl
+ck3bench env baseline france1066-hold-10y                  # the game's own AI on that task
+python -m pytest                                           # the package tests and tests/
 ```
 
-## The experiment files
+`env run` plays one episode with one policy on every seat and prints one JSON
+line; `env play` serves the environment on loopback and plays it with a policy
+per seat (`noop`, `random`, `observe-then-gift`, or `agent-scripted`: the
+reference agent on a scripted model, so no model is called).
+`tests/test_readme.py` runs the `ck3bench env` lines above.
 
-* `ck3bench/experiment.py`: the schema and its three readers (the loader, the
-  block generator, the mirror check against a frozen document).
-* `ck3bench/experiments/`, the examples:
-  * `orgdesign-v4.toml`: the organisation-design study. Three arms on the same
-    start (k_france at the 1066.9.15 bookmark): E0, the game's own AI; K1, an
-    Opus king alone with a private notepad; COUNCIL, an Opus king and five
-    Sonnet dukes with private notepads, a council notepad and messages. The
-    lines its registration still owes are declared in `[pending]` and rendered
-    as placeholders the launcher refuses.
-  * the generated pilot variants, each the study's file with its pilot lines
-    written and labelled `PILOT`: `orgdesign-v4-pilot.toml` (one unsteered
-    150-game-year episode), `orgdesign-v4-pilot25.toml` (one K1 and one COUNCIL
-    episode, 25 game-years) and `orgdesign-v4-pilot-e0var100.toml` (the
-    unsteered variance set, 100 game-years). A pilot enters no test of the study.
-  * `scale0.toml` (seats per game, 2 to 8 concurrent seats on one game) and
-    `budget0.toml` (per-seat cost over three game-years, Sonnet then Opus): the
-    two earlier pilots, run under no registration. Their `[episode]` and
-    `[budget]` keys are declared for the block, never armed; each file says why.
-* `ck3bench/cli.py`: the `ck3bench` command.
+## The API in ten lines
 
-Host-specific runner values go in an untracked `<name>.local.toml` beside the
-experiment (its only table is `[runner]`); a tracked experiment file that
-carries one, or any path under `/home`, `/mnt` or `/tmp`, is refused. The
-overlay may also declare `hosts_forbidden = ["<hostname>", ...]`: names of your
-own machines and accounts that a tracked experiment file must not carry.
+```python
+from ck3bench.env import ParallelEnv, ToolCall, TrajectoryWriter
 
-## What `experiment check` reports
+env = ParallelEnv("fake-duel", trajectory=TrajectoryWriter("t.jsonl"))
+obs, infos = env.reset(seed=7)                       # one observation per seat
+while env.agents:                                    # seats leave when done
+    r = env.call("east", ToolCall("observe")) if "east" in env.agents else None   # in-turn: clock stays
+    gift = {"intent": "interact", "args": {"interaction": "gift_interaction", "target_id": 100}}
+    actions = {s: [ToolCall("do", gift)] if s == "east" else [] for s in env.agents}
+    obs, rewards, terminations, truncations, infos = env.step(actions)            # clock runs one cycle
+env.close()
+```
 
-It prints what the file declares and, beside it, what it observed:
+* `reset(seed, options)`; `seed=None` draws one and records it.
+  `step(actions)`: every live seat sends a list of calls (`[]`: the game's AI
+  plays it this cycle). `Env` is the one-seat view: `reset -> (obs, info)`,
+  `step(action) -> (obs, reward, terminated, truncated, info)`.
+* A malformed action is an `EnvRefusal` with a code; a tool outside the task,
+  or a call the game refuses, is an `ok: false` result the policy reads. **The
+  clock belongs to the step**: a call that would pause, unpause, set the speed
+  or wait is refused `clock_verb_refused` and never reaches the game.
+* **Terminated**: `line_ended`, `goal_reached`, `team_seat_done`.
+  **Truncated**: `horizon`, or the world failing (`game_exited`,
+  `bridge_unavailable`, `clock_stalled`, `reward_unreadable`,
+  `script_log_closed`), when the step's reward is NaN, never 0.
+* Policies: `act(observation, tools) -> list[ToolCall]`, optional
+  `report_usage()` (tokens as the policy reports them, never estimated) and
+  `report_turn()`. Built in: `NoOpPolicy`, `RandomPolicy(seed, menu)`,
+  `ScriptedPolicy`, `ToolCallingAgent`.
+* `ck3bench env serve TASK` serves one environment over HTTP+JSON on loopback.
 
-* `toolkit`: the declared ck3agent version and the installed distribution
-  (`installed_matches`, `installed_differs` or `not_installed`; a witness, not
-  a refusal);
-* `registration`: the declared document looked for under `--tree` (default the
-  current directory): `present_sha_agrees`, `present_sha_not_declared`,
-  `registration_document_not_shipped` or `not_declared`, with the observed
-  sha256 or `unwitnessed`;
-* `pending`: the lines the registration still owes;
-* `block_keys`, and `block_keys_not_emitted` (a declaration the block has no
-  line for, reported rather than dropped);
-* with `--block`, the mirror verdict.
+The trajectory format, metrics, server routes and codes: [docs/reference.md](docs/reference.md).
 
-## Refusals
+## Several seats, agents and the runner
 
-Nothing defaults. Every refusal is typed and names its leg: the JSON row
-carries `reason`, `key`, `path` and `detail`, and the command exits 1. The
-vocabulary (`ck3bench/experiment.py` `R_*`; `tests/test_readme.py` keeps this
-list complete):
+* **Messages and notepads** are environment tools declared per task:
+  `msg_send(to, text)`, delivered at the step's end in the seeded seat order,
+  and `note_read` / `note_write` on a private pad and a shared one. **Team
+  rewards**: `none`, `sum`, `mean`, or `seat` (every seat paid one seat's
+  reward, as a council paid by the king's realm).
+* **The reference agent** (`ToolCallingAgent`) drives a seat from any chat
+  model behind a small `Model` protocol, each tool call run at once in the
+  seat's turn, under a per-step budget you set; `AnthropicModel` (the
+  `anthropic` extra) is a thin adapter that takes the model id from you.
+* **The runner** (`run_mixed_episode`, or `env play`) plays each seat's turn
+  on its own thread; a seat that overruns `--turn-timeout-s` is stepped with
+  `[]` and a `timeout` record.
+* **A Claude Code seat** plays through the MCP shim, a stdio MCP server
+  exposing one seat's tools from a running env server. Start the episode with
+  that seat external (it prints the server's URL first):
 
-| `reason` | when |
-|---|---|
-| `file_missing`, `file_unreadable`, `toml_invalid` | the file itself cannot be read as TOML |
-| `unknown_key` | a key or section the schema does not name: an experiment may not declare what nothing reads |
-| `missing_key` | a required key or section is absent, or one a declared value needs (`seats.ids` under `source = "list"`, the census keys under `"census"`, `[channel]` and `[guide]` under `registration.version = "4"`, `registration.document` beside a `sha256`, a census id without the others) |
-| `wrong_type` | the value's type is not the schema's (`1` where `1.0` is required; a boolean where an integer is) |
-| `invalid_value` | a value of the right type the schema cannot accept (a date, a sha256, a choice, a tool name, a cell whose role is not in `[seats.model_id]`, a declared `registration.sha256` that disagrees with the document present) |
-| `host_path_in_tracked_file` | a path under `/home`, `/mnt` or `/tmp`, or a name from the overlay's `hosts_forbidden`, anywhere in the tracked file's bytes, comments included |
-| `host_key_in_tracked_file` | a `[runner]` host key (`lock`, `display`, `xauthority_glob`, `ollama_unit`, `saves_dir`, `tarball`, `root`, `game_install`, `hosts_forbidden`) in the tracked file |
-| `overlay_key_not_host` | an overlay (`<name>.local.toml`) carrying a table other than `[runner]` or a key that is not a host key |
-| `block_disagrees` | `--block`: a key the document's fence and the TOML read differently, listed one row per key (`missing_in_block`, `extra_in_block`, `value_differs`, `list_differs`) |
-| `no_conditions_block`, `multiple_conditions_blocks`, `malformed_line`, `duplicate_key` | the document's ```` ```registered-conditions ```` fence: none, two, a line that is not `KEY=VALUE`, a scalar declared twice |
-| `template_not_frozen` | the document carries `TEMPLATE - NOT FROZEN`: a template is not a pre-registration |
-| `not_implemented` | a subcommand this version does not bring (exit 2; the row names the milestone) |
+  ```bash
+  ck3bench env play fake-council --seed 1 --seat duke1=noop --seat duke2=noop --external king --turn-timeout-s 900 --port 8770
+  ```
 
-## Not yet implemented
+  then give the session the shim in its MCP config (for example `.mcp.json`):
 
-Every subcommand below exists and refuses `not_implemented`, naming the
-milestone that brings it:
+  ```json
+  {"mcpServers": {"ck3bench-king": {"command": "ck3bench",
+    "args": ["env", "shim", "--url", "http://127.0.0.1:8770", "--seat", "king", "--step-wait-s", "900"]}}}
+  ```
 
-| Subcommand | What it will do | Milestone |
-|---|---|---|
-| `census`, `freeze`, `pilot`, `run` | the kingdom census on the start save; freeze the registration (plan, fragments, conditions); replay a pilot experiment; run one cell of an experiment | `runner` (control: the scale0 and budget0 tables reproduced byte for byte from the pilots' raw records) |
-| `collect` | collect a cell or pilot directory into an artifact | `collect` |
-| `report`, `verify` | report a cell from its artifact; verify a bundle or an artifact | `report/verify` |
+## Tasks
 
-## References that live in the research tree
+`ck3bench env scenarios` lists them; a task can also be a TOML file, read by
+the same strict reader. A task named `-Ny` runs N game-years of 365 days at
+game speed 3.
 
-This repository is exported from the research checkout the study is run from.
-A few values the experiment files declare are paths in that checkout, not in
-this repository (`tests/test_readme.py` checks that every such path a shipped
-file names is listed here):
+| task | seats | steps x game-days | reward | status |
+|---|---|---|---|---|
+| `france1066-treasury-2y` | the King of France | 10 x 73 | gold change | not run live as declared (a 24 x 30-day variant ran to its horizon) |
+| `france1066-gain-county-5y` | the King of France | 25 x 73 | +1 when the realm first exceeds its start; -1 if the line ends | not run live |
+| `france1066-hold-10y` | the King of France | 25 x 146 | realm county change; -50 if the line ends | not run live as declared (a 20 x 180-day variant ran to its horizon) |
+| `france1066-council-10y` | the king and his five largest vassals (chosen by rank at the start), with messages and notepads | 25 x 146 | the king's realm county change, paid to every seat; -50 if his line ends | not run live as declared (a two-year variant with six seats ran to its horizon) |
+| `fake-duel` | two rulers | 8 x 90 | realm county change; -10 if the line ends | runs (fake backend) |
+| `fake-solo` | one ruler | 12 x 30 | gold change | runs (fake backend) |
+| `fake-council` | a king and two vassals, with messages and notepads | 8 x 90 | the king's realm county change, paid to every seat | runs (fake backend) |
 
-* `docs/pre-registration-v4-orgdesign.md` (`orgdesign-v4.toml`
-  `[registration].document`): the pre-registration, written when it is signed.
-  `experiment check` reports it as `registration_document_not_shipped` under a
-  tree without it. The conditions block the TOML generates is the
-  registration's machine-readable part, and a frozen copy of it is what
-  `--block` checks.
-* `docs/cleanup-2026.11/evidence/v4pilot/census/census-lines.txt`
-  (`[seats].census_freeze`, pinned by `census_freeze_sha256`): the census lines
-  of k_france, written by the census run on the 1066.9.15 start save; the cell
-  runner re-runs the census live and refuses a difference.
-* `docs/reg.md`: a placeholder document name in a test.
-* `release/export.py`: the export that writes this repository and its
-  `UPSTREAM` record.
-* Paths under `ck3agent/` name the [ck3agent](https://github.com/skullbloc/ck3agent)
-  package or the files it writes at run time (its API key file, its logs), not
-  this repository.
+The France tasks start from the 1066 bookmark and expect your own save of it,
+`_1066_09_15.ck3`, in the saves directory you name (`--saves-dir`).
 
-## Contributing and security
+## Baselines
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) (this repository is generated by an
-export; how a pull request is carried upstream), [SECURITY.md](SECURITY.md)
-and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+`ck3bench env baseline TASK [--years Y]` reads the game's own AI on a task
+from eight unsteered 100-game-year games from the 1066 France start (no seat;
+ck3agent 2026.12.9; CK3 1.18.3.1; game speed 2), shipped with their
+provenance in `ck3bench/env/baselines_france1066.json` (each game's realm
+counties about every 30 game-days), and replays the task's own reward over the
+series (the no-op return). It rests on **eight** games. Realm counties of the
+King of France's line (84 at the start):
 
-## License
+| game-years | 10 | 25 | 50 | 75 | 100 |
+|---|---|---|---|---|---|
+| mean | 79.0 | 72.5 | 62.6 | 49.4 | 52.2 |
+| sample SD | 4.6 | 29.2 | 53.9 | 52.1 | 45.2 |
+| games under 10 | 0 | 1 | 3 | 4 | 2 |
 
-[Apache-2.0](LICENSE), like ck3agent; attribution in [NOTICE](NOTICE); cite
-with [CITATION.cff](CITATION.cff). Crusader Kings and Paradox Interactive are
-registered trademarks of Paradox Interactive AB; Claude is a trademark of
-Anthropic, PBC. ck3bench is not affiliated with or endorsed by either.
+From about year 40 the outcome is two-peaked (France held, 75 to 135 counties,
+or almost nothing, 0 to 11), so a mean there describes neither peak. The set
+did not read gold or prestige (those terms read `absent`).
 
-## Versioning
+## Running on the real game
 
-Calendar versions like ck3agent (`YYYY.MM.PATCH`); `2026.11.0-dev0` until the
-first one is cut. `VERSION`, `ck3bench/_version.py` and `CHANGELOG.md` agree
-(`tests/test_release_metadata.py`); `UPSTREAM` records the research commit this
-tree was exported from. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+* **The game**: your own copy of Crusader Kings III, Linux native, at the
+  build ck3agent supports (1.18.3.1), and your own saves. Nothing here ships
+  game data.
+* **The toolkit**: ck3agent at the version `pyproject.toml` pins, with its
+  bridge (its release tarball and installer). The backend starts the game
+  with `ck3agent launch` and gives each seat its own toolkit MCP server.
+* **Time**: at game speed 3 the clock runs about 1.6 game-days per wall
+  second: a 2-year task is about 8 minutes of clock, a 10-year one about 38,
+  plus a minute to launch and the policy's own time (the game is paused while
+  it thinks). With six seats a step costs about 10 s outside the clock.
+* **Several games**: one instance each (`CK3_INSTANCE_ID` and its own
+  `XDG_STATE_HOME`), one env server each, about 8 GB of memory each (two ran
+  at once on a 32 GB host; a third did not fit).
+* **Model cost** is your policy's. For scale: a 25-game-year game with six
+  Claude seats (one Opus, five Sonnet) through the same toolkit, its clock
+  running free, cost 168k tokens and USD 32 as the client reported, in 3.8 h.
+
+## Status and limits
+
+* **Run live** (one Linux host, CK3 1.18.3.1, ck3agent 2026.12.11, scripted
+  policies, no model): one-seat France episodes
+  of 2 and 10 game-years to their horizon; a six-seat episode (the king and
+  five census-chosen vassals, two game-years, messages and the shared
+  notepad) in which a succession happened and the king's seat followed the
+  line to the heir; writes applied with the game paused (a gift, a `steer`, a
+  council task), and a law change the game refused, read as refused; the HTTP
+  server and the MCP shim (driven by an MCP client) against a live game; a
+  killed game typed `game_exited`; two games at once.
+* **Not run live:** an episode driven by a model; a war declared through the
+  environment (none was declarable at the 1066 start); the MCP shim under a
+  Claude Code session.
+* **Limits.** Game speed 3 is the fastest (`set_speed 4` answers success and
+  writes 3; a task declaring 4 or 5 is refused `scenario_speed_unreachable`).
+  There is no checkpoint at a step boundary (`checkpoint_unsupported`): no
+  bridge verb writes or loads a save, and an episode always starts from its
+  start save. The toolkit's standing-policy and proposal mods are refused
+  (`mods_not_wired`). **The seed controls nothing in the real game**, only
+  the environment's own ordering, the fake world and seeded policies: seven
+  no-op runs with one seed from one save read the king's gold anywhere from
+  263 to 413 six months in, so report means over episodes.
+
+## Citing, license and versions
+
+Cite with [CITATION.cff](CITATION.cff). [Apache-2.0](LICENSE); attribution in
+[NOTICE](NOTICE). Crusader Kings and Paradox Interactive are registered
+trademarks of Paradox Interactive AB; Claude is a trademark of Anthropic, PBC.
+ck3bench is not affiliated with or endorsed by either. Calendar versions
+(`YYYY.MM.PATCH`), `2026.11.0-dev0` until the first release
+([CHANGELOG.md](CHANGELOG.md)); see also [CONTRIBUTING.md](CONTRIBUTING.md),
+[SECURITY.md](SECURITY.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).

@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use ck3bench in research, please cite it as below."
-title: "ck3bench: the research harness runner over ck3agent"
+title: "ck3bench: Crusader Kings III as an environment for LLM agents"
 type: software
 authors:
   - family-names: Stebbins
@@ -15,10 +15,15 @@ keywords:
   - large language models
   - game AI
   - Crusader Kings III
-  - experiments
-  - reproducibility
+  - reinforcement learning
+  - multi-agent environments
+  - LLM agents
 abstract: >-
-  ck3bench runs experiments over ck3agent, an LLM agent that steers Crusader
-  Kings III's native AI: an experiment is one TOML file, the registration's
-  conditions block is generated from it, and runs produce sealed bundles and
-  reproducible tables.
+  ck3bench is an environment for LLM agents over Crusader Kings III. Agents
+  are seats (rulers in a running game) whose actions are typed tool calls on
+  the ck3agent toolkit; one step is one decision cycle of game-days; rewards
+  are read from game state. It offers a parallel multi-agent API with
+  environment-owned messages and notepads and team rewards, a fake backend
+  for tests, an HTTP server for policies in any language, a reference
+  tool-calling agent, a mixed-policy runner, an MCP shim for a Claude Code
+  seat, a JSONL trajectory format and an unsteered baseline.

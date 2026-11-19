@@ -1,13 +1,9 @@
-"""ck3bench: the research harness runner over the ck3agent product.
+"""ck3bench: Crusader Kings III as an environment for LLM agents.
 
-An experiment is ONE TOML file (`ck3bench/experiments/*.toml`, schema in
-`ck3bench.experiment`); the registration's conditions block is generated from
-it and the mirror is checked.
-
-The package imports nothing outside itself but the ck3agent wheel, at the
-version `pyproject.toml` pins. The cell runner behind `ck3bench run` drives a
-research checkout and is not part of the public distribution: without it `run`
-refuses `not_implemented`.
+The environment is `ck3bench.env` (tasks, the parallel multi-agent Env, the
+fake and real backends, policies, the env server, trajectories, baselines) and
+its command is `ck3bench env`. The package imports nothing outside itself but
+the ck3agent wheel, at the version `pyproject.toml` pins.
 """
 from ._version import __version__
 
