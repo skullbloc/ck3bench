@@ -27,15 +27,31 @@ recording (`test_census.py`).
 Refused, never defaulted: a read that is refused or malformed
 (`census_read_unavailable`), fewer qualifying vassals than the highest declared
 rank (`census_too_few_dukes`).
+
+A seat may also be named by the title its ruler holds at the start
+(`holder_of`, `select_by_holder`): a runtime character id differs from the
+game's history id and from one save to the next, so such a seat is resolved at
+open and never written into the task. The rule:
+
+    query_de_jure(title_key=T) names T (`title.key` == T) and its holder
+    (`title.holder_id`); query_character(holder) reads his name, which must be
+    the declared one: `name` against `holder_name`, or, while the game has not
+    localised it (`name_pending`), `name_key` against `holder_name_key`.
+
+A title with no holder, a holder whose name is not the declared one, or a name
+that does not read (or reads only as a key the task does not declare) is
+refused (`census_seat_unconfirmed`), the refusal naming what was read.
 """
 from __future__ import annotations
 
 from typing import Any, Callable, Mapping, Optional
 
-from .errors import R_CENSUS_READ, R_CENSUS_TOO_FEW, EnvRefusal
+from .errors import R_CENSUS_READ, R_CENSUS_SEAT, R_CENSUS_TOO_FEW, EnvRefusal
 
 DUKE_TIER = 3
 LISTING_PARAMS = {"filter": "ruler", "sort": "realm_counties", "max_results": 5000, "verbose": True}
+HOLDER_RULE = ("the holder of the declared title at the start (query_de_jure title.holder_id), confirmed by his "
+               "name (query_character name, or name_key while the name is pending)")
 RULE = ("vassals of the first seat with a tier-3 ruler row and realm_counties >= 1, ranked by "
         "military_strength, ties by lowest id")
 
@@ -111,3 +127,56 @@ def realm_rows(read: Read) -> dict[int, dict]:
     if why is not None:
         raise EnvRefusal(R_CENSUS_READ, f"search_characters(ruler) answered {why!r}", "census")
     return {r["id"]: r for r in _rows(listing, "characters") if isinstance(r.get("id"), int)}
+
+
+def _int_id(v: Any) -> Optional[int]:
+    return v & 0xFFFFFF if isinstance(v, int) and not isinstance(v, bool) and v > 0 else None
+
+
+def select_by_holder(read: Read, seat: str, title_key: str, holder_name: str,
+                     holder_name_key: Optional[str]) -> tuple[int, dict]:
+    """(the character id of `seat`: the holder of `title_key` now, the record a
+    trajectory header carries: the rule, the title, the holder, the name as
+    read and the field it came from). Refused as the module docstring says."""
+    rec: dict[str, Any] = {"rule": HOLDER_RULE, "seat": seat, "title_key": title_key,
+                           "declared_name": holder_name, "declared_name_key": holder_name_key}
+    dj = read("query_de_jure", {"title_key": title_key})
+    why = _refusal(dj)
+    if why is not None:
+        raise EnvRefusal(R_CENSUS_READ, f"query_de_jure(title_key={title_key}) answered {why!r}", "census")
+    title = dj.get("title")
+    got = title.get("key") if isinstance(title, dict) else None
+    if got != title_key:
+        raise EnvRefusal(R_CENSUS_READ, f"query_de_jure(title_key={title_key}) names {got!r}, not {title_key}",
+                         "census")
+    hid = _int_id(title.get("holder_id"))
+    rec["title_id"] = title.get("title_id")
+    if hid is None:
+        raise EnvRefusal(R_CENSUS_SEAT, f"seat {seat}: {title_key} has no holder (holder_id "
+                                        f"{title.get('holder_id')!r})", "census")
+    rec["holder_id"] = hid
+    prof = read("query_character", {"character_id": hid})
+    why = _refusal(prof)
+    if why is not None:
+        raise EnvRefusal(R_CENSUS_READ, f"query_character(character_id={hid}) answered {why!r}", "census")
+    for k in ("house_name", "dynasty_name", "age"):
+        if k in prof:
+            rec[k] = prof[k]
+    name, key = prof.get("name"), prof.get("name_key")
+    if isinstance(name, str) and name:
+        rec.update(name_read=name, name_field="name")
+        want: Optional[str] = holder_name
+    elif prof.get("name_pending") is True and isinstance(key, str) and key:
+        rec.update(name_read=key, name_field="name_key")
+        if holder_name_key is None:
+            raise EnvRefusal(R_CENSUS_SEAT, f"seat {seat}: {title_key}'s holder {hid} reads only as the name key "
+                                            f"{key!r} (the game has not localised it) and the task declares no "
+                                            "holder_name_key", "census")
+        want = holder_name_key
+    else:
+        raise EnvRefusal(R_CENSUS_SEAT, f"seat {seat}: {title_key}'s holder {hid} has no name in query_character "
+                                        "(neither name nor a pending name_key)", "census")
+    if rec["name_read"] != want:
+        raise EnvRefusal(R_CENSUS_SEAT, f"seat {seat}: {title_key} is held by {hid}, whose {rec['name_field']} "
+                                        f"reads {rec['name_read']!r}, not the declared {want!r}", "census")
+    return hid, rec

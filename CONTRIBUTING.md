@@ -21,15 +21,38 @@ python -m pytest
 Python 3.11 to 3.14. No game is needed for the tests or the fake backend; the real backend needs
 your own copy of the game (README, "Running on the real game").
 
+The suite runs in three setups, and each must be green: with the toolkit absent
+(`pip install pytest` and `pip install --no-deps -e .`, no wheel: the tests
+that read the toolkit skip, each naming why); with the toolkit wheel installed
+without its dependencies (`pip install --no-deps ./ck3agent-<pin>-py3-none-any.whl`,
+so no `mcp`: the tests that need it skip); and with everything installed (the
+setup above: only the sync check of section 4 skips).
+
 ## 3. Tests
 
 * Tests sit beside the module they test (`ck3bench/test_*.py`) and in `tests/`.
-* A new refusal code needs a row in the table of `docs/reference.md`
-  (`tests/test_readme.py` enumerates them from the code).
+* A new refusal code of the environment (`ck3bench.env`) needs a row in the
+  table of `docs/reference.md` (`tests/test_readme.py` enumerates them from the
+  code); a code of the harness (`ck3bench.harness`) is documented in
+  `docs/harness.md`.
 * No file may name a machine, a home directory or a personal email address,
   or carry a work label or an unfinished-work marker (`tests/test_public_tree.py`).
 
-## 4. Tasks, rewards and the trajectory format
+## 4. Before a sync
+
+The sync to this repository happens only while the toolkit version
+`pyproject.toml` pins is a published ck3agent release: the quickstart, CI and
+the setup above all install that release's wheel. The offline suite cannot
+tell; run, with network access:
+
+```bash
+CK3BENCH_SYNC_CHECK=1 python -m pytest tests/test_release_metadata.py
+```
+
+It fails (never skips) when the pinned release's wheel cannot be downloaded,
+or the network cannot be reached.
+
+## 5. Tasks, rewards and the trajectory format
 
 A task is one declaration (`ck3bench/env/scenario.py`, or a TOML file read by
 the same reader) and nothing defaults. A change to a task, a reward term, the
@@ -39,19 +62,19 @@ and the reference's code table in step (`tests/test_readme.py` checks all three)
 Nothing measured is filled in: a value the game or the baseline did not read
 is `null` beside a status.
 
-## 5. Style
+## 6. Style
 
 Match the surrounding code. One concern per PR. No reformat-only or
 rename-only PRs.
 
-## 6. Review process
+## 7. Review process
 
 Add a line under the next version's heading in `CHANGELOG.md`; skip it for
 docs-only and test-only changes. CI must be green. CODEOWNERS routes the
 review; a maintainer merges here. First response within 7 days. No reply after
 14: ping on the PR.
 
-## 7. Credit and licensing
+## 8. Credit and licensing
 
 Sign off every commit with `git commit -s` to certify the
 [DCO](https://developercertificate.org/); the sync does not port or credit a
@@ -59,7 +82,7 @@ commit without a `Signed-off-by:` naming its author. Credit is on by default;
 say so in the PR if you want none. Licensed Apache-2.0
 ([LICENSE](LICENSE), [NOTICE](NOTICE)).
 
-## 8. Conduct and security
+## 9. Conduct and security
 
 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md). Vulnerabilities go in a private
 advisory per [SECURITY.md](SECURITY.md), never a public issue.

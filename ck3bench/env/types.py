@@ -9,7 +9,7 @@ in-process.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping, Optional, Sequence
 
 from .errors import R_ACTION_SHAPE, EnvRefusal
 
@@ -121,7 +121,22 @@ METRIC_DEFINITIONS = {
     "gold": "the character's gold",
     "prestige": "the character's prestige",
     "line_alive": "whether the played line still has a ruler (the bridge's line watch)",
+    "dejure_counties": "counties of the scenario's target title's de jure territory that lie in the realm the "
+                       "character rules: held by him or by a vassal at any depth (0 once the line has ended)",
+    "holds_target_title": "whether the character himself holds the scenario's target title (false once the line "
+                          "has ended)",
+    "ruler_changes": "how many times the played line has passed from one ruler to the next since the episode "
+                     "began (the line watch counts each pass as the game makes it, not only at step ends)",
+    "offensive_wars_declared": "wars declared since the episode began whose primary attacker was a ruler of the "
+                               "played line at the time, whoever chose to declare (the seat's call or the game's "
+                               "AI); a faction's war counts when he leads the faction (he is its attacker); "
+                               "wars already open at the start are not counted",
+    "heir_present": "whether the character's primary title has at least one heir in the game's succession line "
+                    "(false once the line has ended)",
 }
+#: The metrics that read the scenario's `target_title`; a scenario that names
+#: one of them, by a reward term or its goal, declares the title.
+TARGET_METRICS = ("dejure_counties", "holds_target_title")
 METRIC_NAMES = tuple(METRIC_DEFINITIONS)
 
 
@@ -136,6 +151,10 @@ class Metrics:
     line_status: Optional[str] = None        # following | successor_pending | line_ended | None (unread)
     #: per metric, the read it came from (the backend's own words), or why it is unreadable
     source: dict[str, str] = field(default_factory=dict)
+    #: the DYNASTY (not the house: a cadet house is the same dynasty) of the line's character as read,
+    #: None when it did not read; `dynasty_source` is the read, or why it did not read
+    dynasty_id: Optional[int] = None
+    dynasty_source: Optional[str] = None
 
     def get(self, name: str) -> tuple[Any, str]:
         st = self.status.get(name, METRIC_NOT_DECLARED)
@@ -188,6 +207,60 @@ class AdvanceDiagnostics:
     def to_dict(self) -> dict[str, Any]:
         return {"status": self.status, "alarm_rearms": self.alarm_rearms, "dropped_frames": self.dropped_frames,
                 "detail": self.detail}
+
+
+#: A step's game speed, declared beside read: `agreed` (every read was the declared speed),
+#: `mismatch` (a read was another speed: the world did not run as declared), `unwitnessed` (the backend
+#: read the clock and no read gave a speed), `not_reported` (the backend does not read it).
+SPEED_AGREED, SPEED_MISMATCH, SPEED_UNWITNESSED, SPEED_NOT_REPORTED = "agreed", "mismatch", "unwitnessed", "not_reported"
+SPEED_STATUSES = (SPEED_AGREED, SPEED_MISMATCH, SPEED_UNWITNESSED, SPEED_NOT_REPORTED)
+
+
+def speed_witness(declared: int, reads: Optional[Sequence[Any]]) -> dict[str, Any]:
+    """The step's speed record: the scenario's declared speed beside what the clock loop read while the
+    step's clock ran (`reads`: each get_tick_info `game_speed`, None where a read gave none; None when the
+    backend does not report reads). `read` is the distinct speeds read; never a default, never `agreed`
+    without a read."""
+    if reads is None:
+        return {"declared": declared, "read": None, "reads": None, "unread": None, "status": SPEED_NOT_REPORTED}
+    vals = [r for r in reads if isinstance(r, int) and not isinstance(r, bool)]
+    distinct = sorted(set(vals))
+    status = SPEED_UNWITNESSED if not vals else (SPEED_AGREED if distinct == [declared] else SPEED_MISMATCH)
+    return {"declared": declared, "read": distinct, "reads": len(vals), "unread": len(reads) - len(vals),
+            "status": status}
+
+
+#: An ALIGNED wake step's check dates: each check's intended date beside the date the bridge read
+#: when the clock stopped for it. `agreed` (every check read its own date), `mismatch` (a check read another
+#: date: it was made off its date, `off` days late or early), `unread` (a stop gave no date, none read another),
+#: `unwitnessed` (no check was made). Never a default, never `agreed` without a read.
+CHECK_AGREED, CHECK_MISMATCH, CHECK_UNREAD, CHECK_UNWITNESSED = "agreed", "mismatch", "unread", "unwitnessed"
+CHECK_STATUSES = (CHECK_AGREED, CHECK_MISMATCH, CHECK_UNREAD, CHECK_UNWITNESSED)
+
+
+def check_dates_witness(rows: Sequence[tuple[str, Optional[str]]]) -> dict[str, Any]:
+    """The step's `wake.check_dates`: (intended, read) per check, in order. `off` per row is read minus
+    intended in game days (None when the stop gave no date); the record's `off` counts the rows per offset
+    (the distribution); `status` as CHECK_*. One definition: the backends build it and the trajectory checker
+    recomputes it from the rows (it never trusts the stored status)."""
+    from . import calendar
+    out, dist = [], {}
+    for intended, read in rows:
+        ok = calendar.ordinal(read) is not None and calendar.ordinal(intended) is not None
+        off = calendar.ordinal(read) - calendar.ordinal(intended) if ok else None
+        out.append({"intended": intended, "read": read, "off": off})
+        if off is not None:
+            dist[str(off)] = dist.get(str(off), 0) + 1
+    offs = [r["off"] for r in out]
+    if not out:
+        status = CHECK_UNWITNESSED
+    elif any(o not in (None, 0) for o in offs):
+        status = CHECK_MISMATCH
+    elif any(o is None for o in offs):
+        status = CHECK_UNREAD
+    else:
+        status = CHECK_AGREED
+    return {"mode": "aligned", "checks": len(out), "status": status, "off": dist, "rows": out}
 
 
 @dataclass

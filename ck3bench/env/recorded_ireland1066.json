@@ -1,0 +1,196 @@
+{
+ "source": "the toolkit's public `inspect` replies, read live on the 1066.09.15 start (CK3 1.18.3.1, ck3agent 2026.12.11) through a seat's own toolkit server, verbatim",
+ "replies": [
+  {
+   "tool": "inspect",
+   "args": {
+    "subject": "title",
+    "title_key": "k_ireland",
+    "character_id": 37067
+   },
+   "reply": {
+    "ok": true,
+    "tool": "inspect",
+    "result": {
+     "subject": "title",
+     "title_key": "k_ireland",
+     "title_id": 461,
+     "summary": {
+      "held": 0,
+      "total": 14,
+      "fraction": 0.0
+     },
+     "counties": [
+      {
+       "county": 463,
+       "holder_id": 31506,
+       "you_control": false
+      },
+      {
+       "county": 469,
+       "holder_id": 29585,
+       "you_control": false
+      },
+      {
+       "county": 474,
+       "holder_id": 31266,
+       "you_control": false
+      },
+      {
+       "county": 479,
+       "holder_id": 32422,
+       "you_control": false
+      },
+      {
+       "county": 485,
+       "holder_id": 32421,
+       "you_control": false
+      },
+      {
+       "county": 491,
+       "holder_id": 29703,
+       "you_control": false
+      },
+      {
+       "county": 496,
+       "holder_id": 29703,
+       "you_control": false
+      },
+      {
+       "county": 501,
+       "holder_id": 34579,
+       "you_control": false
+      },
+      {
+       "county": 508,
+       "holder_id": 27052,
+       "you_control": false
+      },
+      {
+       "county": 513,
+       "holder_id": 32287,
+       "you_control": false
+      },
+      {
+       "county": 519,
+       "holder_id": 31762,
+       "you_control": false
+      },
+      {
+       "county": 524,
+       "holder_id": 31762,
+       "you_control": false
+      },
+      {
+       "county": 527,
+       "holder_id": 30822,
+       "you_control": false
+      },
+      {
+       "county": 531,
+       "holder_id": 31416,
+       "you_control": false
+      }
+     ]
+    },
+    "blocked": null,
+    "warnings": [],
+    "errors": [],
+    "bridge_health": "ok",
+    "game": {
+     "tick": 0,
+     "date": "1066.09.15",
+     "paused": true,
+     "speed": 3
+    }
+   }
+  },
+  {
+   "tool": "inspect",
+   "args": {
+    "subject": "title_hierarchy",
+    "title_id": 461,
+    "character_id": 37067
+   },
+   "reply": {
+    "ok": true,
+    "tool": "inspect",
+    "result": {
+     "subject": "title_hierarchy",
+     "request_id": "00000000-0000-4000-8000-000000000001",
+     "tick": 0,
+     "game_date": "1066.09.15",
+     "title": {
+      "title_id": 461,
+      "name": "Ireland",
+      "key": "k_ireland",
+      "tier": 4,
+      "tier_name": "kingdom",
+      "de_jure_parent_id": 107,
+      "de_jure_parent_key": "e_britannia",
+      "sub_titles": [
+       {
+        "title_id": 462,
+        "name": "Meath",
+        "key": "d_meath",
+        "tier": 3,
+        "tier_name": "duchy",
+        "de_jure_parent_id": 461,
+        "de_jure_parent_key": "k_ireland"
+       },
+       {
+        "title_id": 473,
+        "name": "Ulster",
+        "key": "d_ulster",
+        "tier": 3,
+        "tier_name": "duchy",
+        "de_jure_parent_id": 461,
+        "de_jure_parent_key": "k_ireland"
+       },
+       {
+        "title_id": 490,
+        "name": "Connacht",
+        "key": "d_connacht",
+        "tier": 3,
+        "tier_name": "duchy",
+        "holder_id": 29703,
+        "de_jure_parent_id": 461,
+        "de_jure_parent_key": "k_ireland"
+       },
+       {
+        "title_id": 507,
+        "name": "Leinster",
+        "key": "d_leinster",
+        "tier": 3,
+        "tier_name": "duchy",
+        "de_jure_parent_id": 461,
+        "de_jure_parent_key": "k_ireland"
+       },
+       {
+        "title_id": 518,
+        "name": "Munster",
+        "key": "d_munster",
+        "tier": 3,
+        "tier_name": "duchy",
+        "holder_id": 31762,
+        "de_jure_parent_id": 461,
+        "de_jure_parent_key": "k_ireland"
+       }
+      ],
+      "sub_title_count": 5
+     }
+    },
+    "blocked": null,
+    "warnings": [],
+    "errors": [],
+    "bridge_health": "ok",
+    "game": {
+     "tick": 0,
+     "date": "1066.09.15",
+     "paused": true,
+     "speed": 3
+    }
+   }
+  }
+ ]
+}

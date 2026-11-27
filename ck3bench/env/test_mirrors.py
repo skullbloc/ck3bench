@@ -1,6 +1,7 @@
-"""Mirrors checked against their source (the toolkit server's code: this
-tree's when it carries one, else the installed ck3agent wheel's), the seat
-transport against real MCP servers (no game), and the package's public text."""
+"""Mirrors checked against their source (the toolkit server's code, read from
+the ck3agent package Python imports: toolkit_source.py), the seat transport
+against real MCP servers (no game), and the package's public text. With no
+toolkit importable, the toolkit-reading tests skip."""
 from __future__ import annotations
 
 import os
@@ -16,13 +17,15 @@ from ck3bench.env import calendar
 from ck3bench.env.types import PUBLIC_TOOLS
 
 PKG = Path(__file__).resolve().parent
-REPO = PKG.parents[1]
-SERVER_SRC = REPO / "ck3agent" / "server"
 
 
 def test_public_tools_are_what_the_toolkit_server_registers(tmp_path):
-    """The toolkit server's own list_tools, read in a child process."""
-    d = _toolkit_server_dir()
+    """The toolkit server's own list_tools, read in a child process (skipped when the toolkit or its `mcp`
+    dependency is not importable: its server imports it)."""
+    from ck3bench.env import toolkit_source
+    d, why = toolkit_source.server_importable()
+    if d is None:
+        pytest.skip(why)
     code = ("import sys, json; sys.path.insert(0, %r); from server import mcp_server as m; "
             "print(json.dumps([t['name'] for t in m.registered_tool_definitions()]))" % str(d.parent))
     env = {k: v for k, v in os.environ.items() if not k.startswith("CK3_")}
@@ -55,15 +58,12 @@ CLOCK_VERBS = {"pause_game", "unpause_game", "set_speed", "set_pause"}
 
 
 def _toolkit_server_dir() -> Path:
-    """The toolkit server's source: this tree's, else the installed wheel's.
-    Neither is a red (ck3agent is this package's one dependency)."""
-    if (SERVER_SRC / "redesign.py").is_file():
-        return SERVER_SRC
-    import importlib.util
-    spec = importlib.util.find_spec("ck3agent")
-    assert spec is not None and spec.submodule_search_locations, "ck3agent is not installed"
-    d = Path(list(spec.submodule_search_locations)[0]) / "server"
-    assert (d / "redesign.py").is_file() and (d / "mcp_server.py").is_file(), f"no toolkit server source in {d}"
+    """The importable toolkit's server source (toolkit_source.server_dir); the test skips when there is none."""
+    from ck3bench.env import toolkit_source
+    d = toolkit_source.server_dir()
+    if d is None:
+        pytest.skip(toolkit_source.ABSENT)
+    assert (d / "redesign.py").is_file(), f"no toolkit server source in {d}"
     return d
 
 
@@ -221,4 +221,4 @@ def test_the_package_text_is_public():
 
 
 def test_control_the_public_text_patterns_fire():
-    assert HOST_PATH.search("/mnt/" "data") and INTERNAL.search("the no" "de") and INTERNAL.search("ck" "-abcd1")
+    assert HOST_PATH.search("/mnt/" "data") and INTERNAL.search("the no" "de") and INTERNAL.search("ck" "-abcd9")

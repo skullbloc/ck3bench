@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, field
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Optional, Sequence
 
 from .errors import R_CHECKPOINT_UNSUPPORTED, EnvRefusal
 from .scenario import Scenario
@@ -65,6 +65,11 @@ class Backend(abc.ABC):
         says so (`not_reported`), never 0."""
         return AdvanceDiagnostics(DIAG_NOT_REPORTED, detail=f"backend {self.name} does not report them")
 
+    def clock_speeds(self) -> Optional[list]:
+        """The game speeds the last advance's clock loop read (each reply's `game_speed`, None where a
+        reply gave none), for the step's speed witness (types.speed_witness). None: not reported."""
+        return None
+
     def observation(self, seat: str) -> dict[str, Any]:
         """Extra per-seat observation data the backend can read cheaply. The
         environment always adds date, cycle, metrics and the last results."""
@@ -76,6 +81,50 @@ class Backend(abc.ABC):
         cannot describe its tools refuses; it never invents a schema."""
         from .errors import R_TOOL_SPECS
         raise EnvRefusal(R_TOOL_SPECS, f"backend {self.name} does not describe its tools", "backend")
+
+    # ── wake tasks (wake.py) ─────────────────────────────────────────────
+    def wake_vocabulary(self) -> dict[str, tuple]:
+        """The wake conditions this backend can witness: {"events": (...),
+        "metrics": (...)} drawn from wake.EVENTS / wake.METRICS. A backend that
+        cannot run a wake task refuses."""
+        from .errors import R_WAKE_UNSUPPORTED
+        raise EnvRefusal(R_WAKE_UNSUPPORTED, f"backend {self.name} does not run wake tasks", "backend")
+
+    def wake_facts(self, seat: str, need: Optional[frozenset] = None) -> dict[str, Any]:
+        """What a wake check reads for `seat`: {character_id, metrics {name: value
+        or None}, events {kind: a monotone count, or the ids the reading names}}.
+        `need` names the events and metrics the seat's conditions read (None:
+        all); a backend may read only those. The fake reads paused; the real
+        game reads while the clock runs (ck3.py)."""
+        from .errors import R_WAKE_UNSUPPORTED
+        raise EnvRefusal(R_WAKE_UNSUPPORTED, f"backend {self.name} does not run wake tasks", "backend")
+
+    def advance_until(self, max_days: int, check_days: int,
+                      probe: Optional[Callable[[str], list]], aligned: bool = False) -> AdvanceResult:
+        """Run the clock at most `max_days`, stopping paused at the first check
+        (every `check_days`) where `probe(date)` returns a non-empty list; with
+        `probe` None, one run of `max_days`. `extra` carries days (run), checks
+        (probes made) and fired (the last probe's list). `aligned`
+        (scenario.WakeDecl.aligned): every check is made paused ON its date
+        (start + k * check_days, max_days last), and `extra["check_dates"]` is
+        types.check_dates_witness of (intended, read) per check."""
+        from .errors import R_WAKE_UNSUPPORTED
+        raise EnvRefusal(R_WAKE_UNSUPPORTED, f"backend {self.name} does not run wake tasks", "backend")
+
+    # ── decision-task outcomes (outcome.py) ──────────────────────────────
+    #: True for a backend whose `outcome_reader` answers; a scenario declaring an outcome refuses otherwise
+    reads_outcomes: bool = False
+
+    def outcome_reader(self, seat: str) -> Callable[[str, dict], tuple[Any, str]]:
+        """A reader for outcome.py: (tool, args) -> (the reply's `result` or None, the call or why it failed),
+        with the public tools on `seat`'s own server. A backend that cannot read them refuses."""
+        from .errors import R_OUTCOME_UNSUPPORTED
+        raise EnvRefusal(R_OUTCOME_UNSUPPORTED, f"backend {self.name} reads no decision-task outcomes", "backend")
+
+    def title_origin(self, seat: str) -> Mapping[str, Any]:
+        """How the scenario's target title came to its holder: the game's title history's newest entry
+        {date, event, char_id}, or {"unread": why}. A backend with no title history says so."""
+        return {"unread": f"backend {self.name} reads no title history"}
 
     def checkpoint(self) -> Mapping[str, Any]:
         raise EnvRefusal(R_CHECKPOINT_UNSUPPORTED, f"backend {self.name} cannot checkpoint", "backend")

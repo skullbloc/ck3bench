@@ -95,16 +95,57 @@ def test_the_external_seat_commands_parse():
     assert b.env_fn.__name__ == "cmd_shim" and b.seat == "king" and str(a.port) in b.url
 
 
+def _run_state(text: str) -> list[str]:
+    """The run states (scenario.RUN_STATES) a text names."""
+    from ck3bench.env.scenario import RUN_STATES
+    return [r for r in RUN_STATES if r in text]
+
+
 def test_every_builtin_task_is_in_the_table_with_its_status():
+    """Each row's status is the one its declaration states: the run state in the row's status cell is the one
+    in the task's status_reason (one each), and a fake task's row says it runs on the fake backend."""
     table = _section(_readme(), "## Tasks")
     assert len(BUILTIN_DICTS) >= 5
+    rows = [ln for ln in table.splitlines() if ln.startswith("| `")]
+    assert len(rows) == len(BUILTIN_DICTS), "one row per built-in task, and no row for a task that is not one"
     for name in BUILTIN_DICTS:
         sc = builtin(name)
-        row = next((ln for ln in table.splitlines() if ln.startswith(f"| `{name}` |")), None)
+        row = next((ln for ln in rows if ln.startswith(f"| `{name}` |")), None)
         assert row is not None, name
-        want = "runs (fake backend)" if sc.backend == "fake" else "not run live"
-        assert want in row, (name, sc.status, row)
+        status = row.rstrip(" |").split(" | ")[-1]
+        if sc.backend == "fake":
+            assert "runs (fake backend)" in status, (name, row)
+        else:
+            declared = _run_state(sc.status_reason)
+            assert len(declared) == 1, (name, sc.status_reason)
+            assert _run_state(status) == declared, (name, declared, status)
         assert f"{sc.n_steps} x {sc.cycle_days}" in row, (name, row)
+        assert (", wake" in row) == (sc.wake is not None), (name, row)
+
+
+def test_CONTROL_a_wrong_status_in_the_table_is_red():
+    """The status check reads the declaration: a row saying another run state than its task's is a mismatch."""
+    sc = builtin("france1066-gain-county-5y")
+    assert _run_state(sc.status_reason) == ["not run live"]
+    assert _run_state("run live with a model") != _run_state(sc.status_reason)
+
+
+def test_every_save_a_task_opens_is_in_the_starts_table():
+    """Starts and saves: every save file a built-in task opens is a row, and a task whose save is pinned by
+    sha256 is named in a row that gives the pin's first eight characters."""
+    sec = _section(_readme(), "## Starts and saves")
+    rows = [ln for ln in sec.splitlines() if ln.startswith("| `")]
+    for name in BUILTIN_DICTS:
+        sc = builtin(name)
+        if sc.start_save is None:
+            continue
+        mine = [r for r in rows if f"`{sc.start_save}`" in r.split(" | ")[0]
+                and (sc.start_save_sha256 is None) == (" | no | " in r)]
+        assert mine, (name, sc.start_save, sc.start_save_sha256)
+        if sc.start_save_sha256:
+            assert any(sc.start_save_sha256[:8] in r for r in mine), (name, sc.start_save_sha256[:8])
+            short = name.split("-", 1)
+            assert any(f"`{name}`" in r or f"`{short[0]}" in r for r in mine), name
 
 
 def test_the_baseline_table_is_the_shipped_file():
@@ -153,7 +194,7 @@ def _named_paths() -> dict[str, str]:
     named: dict[str, str] = {}
     for p in sorted(ROOT.rglob("*")):
         rel = p.relative_to(ROOT)
-        # UPSTREAM is the export's provenance record (it names the generator by design)
+        # UPSTREAM is the build step's provenance record (it names the generator by design)
         if not p.is_file() or rel.as_posix() in (".gitignore", ".ck3bench-export", "UPSTREAM") or any(
                 s in SKIP or s.endswith(".egg-info") for s in rel.parts):
             continue

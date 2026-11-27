@@ -298,7 +298,8 @@ def test_the_real_backend_route_inherits_the_layer_and_never_sees_its_tools(tmp_
     assert env.call("king", C("observe")).ok
     obs, *_ = env.step({s: [] for s in env.agents})
     assert obs["rival"]["comms"]["inbox"][0]["text"] == "peace?"
-    seen = [name for tp in tr.values() for name, _ in tp.calls]
+    # (the backend's own per-turn news read, observe(depth="news"), is not the seat's call)
+    seen = [name for tp in tr.values() for name, a in tp.calls if a.get("depth") != "news"]
     assert seen == ["observe"], "the game's tool server saw only the game tool"
     env.close()
 

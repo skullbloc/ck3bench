@@ -10,6 +10,7 @@ import pytest
 
 from ck3bench.env import ParallelEnv, ToolCall, contract
 from ck3bench.env import calendar
+from ck3bench.env import ck3 as ck3mod
 from ck3bench.env.ck3 import Ck3Backend, _channel_closed
 from ck3bench.env.errors import (R_CHECKPOINT_UNSUPPORTED, R_LAUNCH, R_SAVE_MISSING, R_SAVE_SHA,
                                  R_SPEED, R_START_DATE, TRUNC_BRIDGE_UNAVAILABLE, TRUNC_CLOCK_STALLED,
@@ -75,6 +76,10 @@ class FakeBridge:
         self.top: dict[int, int | None] = {}
         self.domain = {37067: 4}         # query_realm domain_size (the counties a ruler holds himself)
         self.rulers: list[dict] = []     # search_characters(filter=ruler) rows
+        #: query_character `liege_id` by character (absent: the reply carries none); with
+        #: `court_of` the ruler listing keeps the rows whose `_liege` is that ruler
+        self.liege: dict[int, int] = {}
+        self.court_reply: dict | None = None    # a court_of listing's reply, when set (a refusal)
 
     def call(self, action, params=None, timeout=8.0):
         self.calls.append((action, params or {}))
@@ -106,7 +111,8 @@ class FakeBridge:
                 return {**self.profile, "played_line": dict(self.watch)}
             cid = params["character_id"]
             top = self.top.get(cid, cid)
-            return {**self.profile, "id": cid, **({"top_liege_id": top} if top is not None else {})}
+            return {**self.profile, "id": cid, **({"top_liege_id": top} if top is not None else {}),
+                    **({"liege_id": self.liege[cid]} if cid in self.liege else {})}
         if action == "query_realm":
             n = self.realm.get(params["character_id"])
             if n is None:
@@ -114,7 +120,14 @@ class FakeBridge:
             d = self.domain.get(params["character_id"])
             return {"realm_total_counties": n, **({"domain_size": d} if d is not None else {})}
         if action == "search_characters":
-            return {"characters": [dict(r) for r in self.rulers], "returned": len(self.rulers)}
+            if "court_of" in params:
+                if self.court_reply is not None:
+                    return dict(self.court_reply)
+                rows = [{k: v for k, v in r.items() if k != "_liege"} for r in self.rulers
+                        if r.get("_liege") == params["court_of"]]
+                return {"characters": rows, "returned": len(rows)}
+            return {"characters": [{k: v for k, v in r.items() if k != "_liege"} for r in self.rulers],
+                    "returned": len(self.rulers)}
         return {"error": f"unknown {action}"}
 
     def close(self):
@@ -168,10 +181,13 @@ def test_open_launches_the_copy_sets_speed_and_binds_each_seat(tmp_path):
     w = b.open(_scn(), seed=1)
     assert w.game_date == "1066.09.15" and w.characters == {"king": 37067}
     assert host.argv[:3] == ["ck3agent", "launch", "--save"] and host.argv[3].endswith("_1066_09_15.ck3")
+    # the launch waits with margin over the slowest measured load (119.5 s), not the CLI's 120 s
+    assert host.argv[4:] == ["--wait", str(ck3mod.LAUNCH_ACTIVE_WAIT_S)] and ck3mod.LAUNCH_ACTIVE_WAIT_S >= 2.5 * 119.5
     assert host.argv[3] != str(tmp_path / "saves" / "_1066_09_15.ck3"), "the game runs a COPY of the save"
     assert ("set_speed", {"speed": 3}) in br.calls
     assert ("query_character", {"character_id": 37067, "played_line": 1}) in br.calls, "the line watch is armed"
     assert tr["king"].env["CK3_AGENT_CHARACTER_ID"] == "37067"
+    assert tr["king"].env["CK3_CLOCK_OWNER"] == "env", "the seat's server is told the environment owns the clock"
     assert w.provenance["start_save_sha256"] == hashlib.sha256(b"SAVE").hexdigest()
     assert w.provenance["fake"] is False
 
@@ -367,6 +383,67 @@ def test_the_ruler_listing_is_read_once_per_paused_moment(tmp_path):
     assert listings() == n + 2, "a listing read before the clock ran is not reused after it"
 
 
+# ── the narrow read: a vassal's row from his liege's court ──────────────────
+#: Read live (1066 start, the Duke of Normandy under the King of France): the court
+#: listing (search_characters court_of=liege) gave his row the same realm_counties
+#: (9) as the whole listing, at 13-16 KB against 2.4 MB.
+
+def _court_world(br):
+    _vassal_world(br)
+    br.liege[DUKE] = 37067
+    br.rulers[1]["_liege"] = 37067
+
+
+def test_a_vassal_with_a_liege_reads_his_row_from_the_liege_court_not_the_whole_listing(tmp_path):
+    br = FakeBridge(speed=0)
+    _court_world(br)
+    b = _council(tmp_path, br)
+    br.watch = {"status": "following", "line_character_id": DUKE}
+    n = len(br.calls)
+    m = b.metrics("duke1", ("realm_counties",))
+    assert m.values == {"realm_counties": 9}
+    assert "court_of=37067" in m.source["realm_counties"]
+    lists = [c for c in br.calls[n:] if c[0] == "search_characters"]
+    assert len(lists) == 1 and lists[0][1].get("court_of") == 37067 and lists[0][1]["max_results"] == 500
+
+
+def test_the_court_listing_is_read_once_per_liege_per_paused_moment(tmp_path):
+    br = FakeBridge(speed=0)
+    _court_world(br)
+    b = _council(tmp_path, br)
+    br.watch = {"status": "following", "line_character_id": DUKE}
+
+    def courts():
+        return sum(1 for c in br.calls if c[0] == "search_characters" and "court_of" in c[1])
+    b.metrics("duke1", ("realm_counties",))
+    b.metrics("duke1", ("realm_counties",))
+    assert courts() == 1
+    b.advance(30)
+    b.metrics("duke1", ("realm_counties",))
+    assert courts() == 2, "a court read before the clock ran is not reused after it"
+
+
+@pytest.mark.parametrize("refused", [{"error": "bridge_busy"}, {"success": False, "reason": "x"}])
+def test_a_refused_court_listing_reads_unreadable(tmp_path, refused):
+    br = FakeBridge(speed=0)
+    _court_world(br)
+    br.court_reply = refused
+    b = _council(tmp_path, br)
+    br.watch = {"status": "following", "line_character_id": DUKE}
+    m = b.metrics("duke1", ("realm_counties",))
+    assert m.status["realm_counties"] == "unreadable" and "court_of=37067" in m.source["realm_counties"]
+
+
+def test_a_vassal_absent_from_his_liege_court_reads_unreadable(tmp_path):
+    br = FakeBridge(speed=0)
+    _court_world(br)
+    br.rulers[1]["_liege"] = 99999           # listed under someone else's court
+    b = _council(tmp_path, br)
+    br.watch = {"status": "following", "line_character_id": DUKE}
+    m = b.metrics("duke1", ("realm_counties",))
+    assert m.status["realm_counties"] == "unreadable" and str(DUKE) in m.source["realm_counties"]
+
+
 def test_the_census_record_carries_what_it_ranked_on(tmp_path):
     from ck3bench.env import census
     rows = [{"id": 1, "tier": 3, "realm_counties": 9}, {"id": 2, "tier": 3, "realm_counties": 5}]
@@ -384,7 +461,7 @@ def test_the_census_record_carries_what_it_ranked_on(tmp_path):
 #: (`frame_matches`: no request_id and not a named push -> "match") hands back as
 #: the reply. Taken as the answer, it makes the start metrics unreadable and the
 #: first step truncate `reward_unreadable`.
-FOREIGN_BIND_RESULT = {"caller_request_id": "4b175fe1-6f41-4276-adf1-19abe55260b9", "tick": 0,
+FOREIGN_BIND_RESULT = {"caller_request_id": "deadbeef-cafe-4fad-beef-cafebabeface", "tick": 0,
                        "game_date": "1066.09.15", "flush_id": 0, "action": "session_control",
                        "verb": "set_controlled_character", "success": True, "type": "result"}
 
@@ -586,3 +663,50 @@ def test_a_step_reports_its_alarm_rearms_and_dropped_frames(tmp_path):
     assert d.status == DIAG_REPORTED and d.alarm_rearms == adv.extra["rearms"] and d.dropped_frames == 2
     assert b.advance_diagnostics(adv).dropped_frames == 0      # counted once, per step
     assert at_open == 0
+
+
+# ── the step's game speed: declared beside read ──────────────────────────────────────────────────
+
+def test_speed_witness_states():
+    from ck3bench.env.types import speed_witness
+    assert speed_witness(5, None)["status"] == "not_reported"
+    assert speed_witness(5, [])["status"] == "unwitnessed"
+    assert speed_witness(5, [None, None]) == {"declared": 5, "read": [], "reads": 0, "unread": 2,
+                                               "status": "unwitnessed"}
+    assert speed_witness(5, [5, 5, None]) == {"declared": 5, "read": [5], "reads": 2, "unread": 1,
+                                               "status": "agreed"}
+    assert speed_witness(5, [5, 3])["status"] == "mismatch"
+    assert speed_witness(5, [3])["read"] == [3]
+    assert speed_witness(3, [True])["status"] == "unwitnessed"        # a bool is not a speed
+
+
+def test_a_declared_fast_speed_is_established_and_witnessed_each_step(tmp_path):
+    b, br, host, _ = _backend(tmp_path)
+    w = b.open(_scn(game_speed=5), seed=1)
+    assert ("set_speed", {"speed": 5}) in br.calls
+    assert host.env[ck3mod.GAME_SPEED_ENV] == "5"                      # declared to the bridge at launch
+    assert w.provenance["game_speed"] == {"declared": 5, "read_at_open": 5}
+    b.advance(30)
+    got = b.clock_speeds()
+    assert got and set(got) == {5}
+
+
+def test_a_step_that_ran_at_another_speed_is_recorded_and_named(tmp_path):
+    import io
+    import json
+    from ck3bench.env.trajectory import TrajectoryWriter, check_trajectory
+    b, br, _, _ = _backend(tmp_path)
+    buf = io.StringIO()
+    env = ParallelEnv(_scn(game_speed=5), backend=b, trajectory=TrajectoryWriter(stream=buf))
+    env.reset(seed=1)
+    env.step({"king": [ToolCall("observe")]})
+    br.speed = 3                                   # the world runs slower than declared
+    env.step({"king": [ToolCall("observe")]})
+    env.close()
+    records = [json.loads(x) for x in buf.getvalue().splitlines() if x.strip()]
+    steps = [r for r in records if r["kind"] == "step"]
+    assert steps[0]["advance"]["speed"]["status"] == "agreed" and steps[0]["advance"]["speed"]["read"] == [5]
+    assert steps[1]["advance"]["speed"] == {**steps[1]["advance"]["speed"], "declared": 5, "read": [3],
+                                            "status": "mismatch"}
+    problems = check_trajectory(records)
+    assert any("ran at speed [3], declared 5" in x for x in problems), problems

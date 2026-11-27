@@ -1,0 +1,155 @@
+{
+ "_doc": "the Munster start, a seat's 13th turn (1071.11.07): do action_class=formable_titles candidates=[k_ireland, d_leinster] as the seat received it, cut to the fields the goal line reads (title_key, do_call, blocked, requirements, price_basis.at_succession)",
+ "rows": [
+  {
+   "title_key": "d_leinster",
+   "do_call": {
+    "tool": "mcp__ck3seat__do",
+    "args": {
+     "intent": "mint_title",
+     "args": {
+      "title_key": "d_leinster"
+     }
+    }
+   },
+   "blocked": null,
+   "requirements": [
+    {
+     "requirement": "price",
+     "currency": "gold",
+     "cost": 162.5,
+     "have": 192.89,
+     "met": true,
+     "basis": "base 250.0 less 35.0% (perk -50.0, culture ethos -37.5); a perk or trait discount is the ruler's own and dies with him"
+    },
+    {
+     "requirement": "game_check",
+     "met": true,
+     "reasons": []
+    }
+   ],
+   "price_basis": {
+    "at_succession": {
+     "heir_id": 36303,
+     "price": 212.5,
+     "rises": 50.0,
+     "why": "your own ducal_conquest_perk discount dies with you; create d_leinster before your death to pay 162.5"
+    }
+   }
+  },
+  {
+   "title_key": "k_ireland",
+   "do_call": {
+    "tool": "mcp__ck3seat__do",
+    "args": {
+     "intent": "mint_title",
+     "args": {
+      "title_key": "k_ireland"
+     }
+    }
+   },
+   "blocked": {
+    "gate": "cannot_afford",
+    "class": "resource",
+    "severity": "blocked",
+    "retryable": true,
+    "is_known_limitation": false,
+    "summary": "creating k_ireland costs 325.00 gold; you have 192.89",
+    "measured": {
+     "currency": "gold",
+     "cost": 325.0,
+     "gold": 192.89
+    },
+    "raw_reason": "create_title_cannot_afford",
+    "why": "the action has a price and the character cannot pay it now",
+    "retry": "after the blocking condition clears",
+    "scope": "arguments"
+   },
+   "requirements": [
+    {
+     "requirement": "de_jure_counties",
+     "have": 8,
+     "need": 7,
+     "of": 14,
+     "met": true
+    },
+    {
+     "requirement": "price",
+     "currency": "gold",
+     "cost": 325.0,
+     "have": 192.89,
+     "met": false,
+     "months_of_income": 40,
+     "income_basis": "132.11 gold short at +3.33 a month (the income read, before the expenses it leaves out; armies raised cost more); what raises it: do action_class=income_levers",
+     "net_realised": "unread: no step read yet",
+     "months_to_target": {
+      "short": 132.11,
+      "months": null,
+      "why": "no step read yet: the net gold a month is not known"
+     },
+     "basis": "base 500.0 less 35.0% (perk -100.0, culture ethos -75.0); a perk or trait discount is the ruler's own and dies with him"
+    },
+    {
+     "requirement": "game_check",
+     "met": false,
+     "reasons": [
+      "Petty King Murchad does not have gold 325"
+     ]
+    },
+    {
+     "requirement": "tier_rule",
+     "met": false,
+     "rule": "hold 2 duchy titles (you hold 1) (or hold 1 title of kingdom tier or above)",
+     "one_of": [
+      {
+       "tier": "duchy",
+       "need": 2,
+       "have": 1
+      },
+      {
+       "tier": "kingdom",
+       "need": 1,
+       "have": 0
+      },
+      {
+       "tier": "empire",
+       "need": 1,
+       "have": 0
+      },
+      {
+       "tier": "hegemony",
+       "need": 1,
+       "have": 0
+      }
+     ],
+     "your_tier": "duchy",
+     "source": "the game's own check: its 'Titles Required' lines, any one of which suffices",
+     "duchies_priced": [
+      {
+       "title_key": "d_leinster",
+       "cost": 162.5,
+       "currency": "gold",
+       "gate": null
+      }
+     ],
+     "bill": {
+      "currency": "gold",
+      "cost": 487.5,
+      "of": [
+       "d_leinster",
+       "k_ireland"
+      ]
+     }
+    }
+   ],
+   "price_basis": {
+    "at_succession": {
+     "heir_id": 36303,
+     "price": 425.0,
+     "rises": 100.0,
+     "why": "your own ducal_conquest_perk discount dies with you; create k_ireland before your death to pay 325.0"
+    }
+   }
+  }
+ ]
+}

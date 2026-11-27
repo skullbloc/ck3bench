@@ -5,9 +5,8 @@ type: software
 authors:
   - family-names: Stebbins
     given-names: Harrison
-version: 2026.11.0-dev0
-# date-released is stamped at the first release (tests/test_release_metadata.py
-# requires it for a release version and forbids it for a -dev one)
+version: 2026.12.0
+date-released: "2026-11-27"
 license: Apache-2.0
 repository-code: "https://github.com/skullbloc/ck3bench"
 url: "https://github.com/skullbloc/ck3bench"
