@@ -1045,7 +1045,8 @@ of the other files then goes through these rules in order:
   `HOME`'s last part) and every name a home path or a `~name/` in the files
   carries, three characters or more, wherever it stands outside letters and
   digits (a run directory named with it, a value split from its path), become
-  `<user name>`, with the same ordinary-word caveat;
+  `<user name>`, with the same ordinary-word caveat (`root`, `shared`, `public` and
+  `runner`, a hosted CI machine's account, name no person and are left);
 * **addresses**: an IPv4 address becomes `<ip address>` (a dotted number after
   "version", "v", "build" or "CK3" whose first number is below 10 is a
   version and is kept; a game date such as 1066.9.15 has three parts and is

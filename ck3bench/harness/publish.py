@@ -44,7 +44,7 @@ keys) and every line of the other files then goes through these rules, in this o
   user name     this account's name, USER/LOGNAME/USERNAME and HOME's last part, and every name a home path or a
                 `~name/` in the files carries (three characters or more), wherever it stands outside letters and
                 digits (a run directory's name, a value split from its path), becomes `<user name>`; the same
-                ordinary-word caveat as host names
+                ordinary-word caveat as host names. GENERIC_ACCOUNTS (root, shared, public, runner) name no person and are left
   addresses     an IPv4 address becomes `<ip address>` (a dotted version number after "version", "v", "build" or
                 "CK3" whose first number is below 10 is kept), an IPv6 address too, a MAC address (also in dot
                 notation, 001a.2b3c.4d5e) `<mac address>`;
@@ -515,6 +515,12 @@ class Rewriter:
 USER_IN_PATH = re.compile(r"/(?:home|Users|var/home)/([^/\s\"'<>]+)|(?<![\w/~])~([a-z_][\w.-]*)(?=/)")
 
 
+#: account names that name no person and are not replaced: a system's own, and `runner`, the account of a hosted CI
+#: machine, which is also a word of the harness's own file and field names (runner_start.json, runner_flags), so
+#: replacing it would rewrite the record itself
+GENERIC_ACCOUNTS = ("root", "shared", "Shared", "public", "Public", "runner")
+
+
 def user_names(env: dict, raws: list[bytes]) -> list[str]:
     """The user names to replace: this process's account, USER/LOGNAME/USERNAME and HOME's last part from the
     environment the rewrite reads, and every name a home directory or a tilde home carries in the files."""
@@ -532,7 +538,7 @@ def user_names(env: dict, raws: list[bytes]) -> list[str]:
         text = unescaped(raw.decode("utf-8", "replace"))
         for m in USER_IN_PATH.finditer(text):
             names.add(m.group(1) or m.group(2))
-    return sorted(n for n in names if n and n not in ("root", "shared", "Shared", "public", "Public"))
+    return sorted(n for n in names if n and n not in GENERIC_ACCOUNTS)
 
 
 def _json(p: Path) -> Optional[dict]:

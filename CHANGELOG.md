@@ -140,7 +140,8 @@ The first version: Crusader Kings III as an environment for LLM agents.
   publishable copy (limit text, host names in any capitalisation, configured,
   home and other private paths, network shares, sockets and temporary paths,
   IP and MAC addresses, user ids, session and Drive links, the agent CLI's
-  account and limit fields and session ids replaced); it refuses, by class,
+  account and limit fields and session ids replaced; the account names `root`,
+  `shared`, `public` and `runner` name no person and are left); it refuses, by class,
   file and line, when one survives, and before any rule a symbolic or hard
   link and a host that is not a label; a file that is not UTF-8 text, holds a
   NUL byte or does not decompress, and a `run.json` that is not one JSON

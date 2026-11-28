@@ -731,3 +731,20 @@ def test_a_pwd_key_holding_a_path_is_a_working_directory_rewritten_as_a_path(tmp
     (run / "post.tsv").write_text('note\t0\t2026-01-01T00:00:00Z\t{"pwd": "' + 'correct horse battery"}\n')
     with pytest.raises(P.PublishRefused, match=r"post.tsv:\d+: key or token"):
         P.publish(run, tmp_path / "pub2", env)
+
+
+def test_a_hosted_ci_account_is_not_a_user_name_and_the_copy_still_reads(tmp_path, monkeypatch):
+    """`runner` (a hosted CI machine's account) names no person and is a word of the harness's own names
+    (runner_start.json, runner_flags): it is not replaced, so the record lists its files and the scorer reads the
+    copy's run.json as it reads the run's."""
+    import types
+    real = P.pwd.getpwuid
+    monkeypatch.setattr(P.pwd, "getpwuid", lambda uid: types.SimpleNamespace(pw_name="runner", pw_dir=real(uid).pw_dir))
+    run, env = _run(tmp_path)
+    assert "runner" not in P.user_names(env, [])
+    rj = json.loads((run / "run.json").read_text())
+    rj.update(runner_flags=["--wall-budget-s", "100"])
+    (run / "run.json").write_text(json.dumps(rj))
+    rec = P.publish(run, tmp_path / "pub", env)
+    assert "<user name>" not in json.dumps(rec["files"])
+    assert json.loads((tmp_path / "pub" / "run.json").read_text())["runner_flags"] == ["--wall-budget-s", "100"]
