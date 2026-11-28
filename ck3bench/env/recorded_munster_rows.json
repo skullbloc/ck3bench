@@ -1,0 +1,3396 @@
+{
+ "about": "Replay fixtures, test inputs and not results: the step rows the env wrote in two recorded episodes of the Munster wake task (munster1066-kingdom-30y-wake) (every step's metrics, rewards and end), reduced to what a judge reads (replay.recorded_rows). In the first the title is first held after a call of the seat's own turn, in the second after a standing order the seat left; test_once_goal.py re-judges both under the task they were written by and under the once task.",
+ "munster_1086": {
+  "character_id": 31762,
+  "end": {
+   "reason": "all_seats_done",
+   "returns": {
+    "munster": 16.0
+   },
+   "steps": 55
+  },
+  "seat": "munster",
+  "start_date": "1066.09.15",
+  "start_metrics": {
+   "character_id": 31762,
+   "game_date": "1066.09.15",
+   "line_status": "following",
+   "source": {
+    "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+    "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+    "line_alive": "query_character played_line.status"
+   },
+   "status": {
+    "dejure_counties": "ok",
+    "holds_target_title": "ok",
+    "line_alive": "ok"
+   },
+   "values": {
+    "dejure_counties": 3,
+    "holds_target_title": false,
+    "line_alive": true
+   }
+  },
+  "steps": [
+   {
+    "game_date": "1067.09.15",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1067.09.15",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 3,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 1,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1067.12.25",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1067.12.25",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 2,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1068.03.02",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1068.03.02",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 3,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1068.09.18",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1068.09.18",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 4,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.02.15",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.02.15",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 5,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.04.16",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.04.16",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 6,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.05.21",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.05.21",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 7,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.07.20",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.07.20",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 8,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.08.03",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.08.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 9,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.08.17",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.08.17",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 10,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.09.07",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.09.07",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 11,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.11.06",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1069.11.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 12,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1070.11.06",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1070.11.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 13,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1071.11.06",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1071.11.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 14,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1072.05.25",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1072.05.25",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 15,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1073.04.11",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1073.04.11",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 5,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 16,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1073.12.27",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1073.12.27",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 5,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 17,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1074.04.26",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1074.04.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 18,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1074.07.01",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1074.07.01",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 19,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1074.10.29",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1074.10.29",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 20,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1075.01.27",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1075.01.27",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 21,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1075.05.23",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1075.05.23",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 22,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1075.09.20",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1075.09.20",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 23,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1075.12.19",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1075.12.19",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 24,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.03.04",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1076.03.04",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 25,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.05.03",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1076.05.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 26,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.06.07",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1076.06.07",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 27,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.08.06",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1076.08.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 28,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.11.04",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1076.11.04",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 29,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.12.04",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1076.12.04",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 30,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.01.03",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.01.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 31,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.03.04",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.03.04",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 32,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.05.03",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.05.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 33,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.06.07",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.06.07",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 34,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.06.15",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.06.15",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 35,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.08.14",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.08.14",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 36,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.09.13",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.09.13",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 37,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.10.28",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.10.28",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 38,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.12.27",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1077.12.27",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 39,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.02.25",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1078.02.25",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 40,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.03.27",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1078.03.27",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 41,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.05.26",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1078.05.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 42,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.08.24",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1078.08.24",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 43,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.09.29",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1078.09.29",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 44,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1079.02.26",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1079.02.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 45,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1080.02.26",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1080.02.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 46,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1081.02.26",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1081.02.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 47,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1081.04.20",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1081.04.20",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 48,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1082.04.08",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1082.04.08",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 49,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1082.05.01",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1082.05.01",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 50,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1083.05.01",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1083.05.01",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 51,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1084.05.01",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1084.05.01",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 52,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1085.05.01",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1085.05.01",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 53,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1085.12.31",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1085.12.31",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 54,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "calls_naming_title": [
+     {
+      "game_date": "1085.12.31",
+      "intent": "mint_title",
+      "step": 55,
+      "tool": "do"
+     }
+    ],
+    "created": {
+     "by": "you: do mint_title at step 55",
+     "char_id": 31762,
+     "date": "1085.12.31",
+     "event": "created",
+     "read": "query(domain=title_history, title_id=461): the newest entry"
+    },
+    "game_date": "1086.03.14",
+    "metrics": {
+     "character_id": 31762,
+     "game_date": "1086.03.14",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762) title.holder_id 31762",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": true,
+      "line_alive": true
+     }
+    },
+    "reward": 10.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 10.0
+    },
+    "step": 55,
+    "termination_reason": "goal_reached",
+    "truncation_reason": null
+   }
+  ],
+  "task": "munster1066-kingdom-30y-wake"
+ },
+ "munster_1096": {
+  "character_id": 31762,
+  "end": {
+   "reason": "all_seats_done",
+   "returns": {
+    "munster": 16.0
+   },
+   "steps": 45
+  },
+  "seat": "munster",
+  "start_date": "1066.09.15",
+  "start_metrics": {
+   "character_id": 31762,
+   "dynasty_id": 2044,
+   "dynasty_source": "query_character(31762) dynasty_id",
+   "game_date": "1066.09.15",
+   "line_status": "following",
+   "source": {
+    "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+    "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+    "line_alive": "query_character played_line.status"
+   },
+   "status": {
+    "dejure_counties": "ok",
+    "holds_target_title": "ok",
+    "line_alive": "ok"
+   },
+   "values": {
+    "dejure_counties": 3,
+    "holds_target_title": false,
+    "line_alive": true
+   }
+  },
+  "steps": [
+   {
+    "game_date": "1067.07.20",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1067.07.20",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 4,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 1,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1068.05.24",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1068.05.24",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 2.0,
+    "reward_terms": {
+     "dejure_counties_delta": 2.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 2,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.05.24",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1069.05.24",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 3,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1069.07.26",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1069.07.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 4,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1070.02.11",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1070.02.11",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 5,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1070.03.11",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1070.03.11",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 6,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1070.05.06",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1070.05.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 7,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1070.09.03",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1070.09.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 8,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1071.01.01",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1071.01.01",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 7,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 9,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1071.03.26",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1071.03.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 10,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1072.03.26",
+    "metrics": {
+     "character_id": 31762,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(31762) dynasty_id",
+     "game_date": "1072.03.26",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=31762) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=31762): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 11,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1072.07.16",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1072.07.16",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": -2.0,
+    "reward_terms": {
+     "dejure_counties_delta": -2.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 12,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1072.11.13",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1072.11.13",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 13,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1073.03.13",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1073.03.13",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 6,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 14,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1073.07.11",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1073.07.11",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 2.0,
+    "reward_terms": {
+     "dejure_counties_delta": 2.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 15,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1074.01.07",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1074.01.07",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 8,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 16,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1074.06.10",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1074.06.10",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 1.0,
+    "reward_terms": {
+     "dejure_counties_delta": 1.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 17,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1075.06.10",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1075.06.10",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 18,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.06.10",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1076.06.10",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 19,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1076.10.14",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1076.10.14",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 20,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1077.10.14",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1077.10.14",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 21,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.02.11",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1078.02.11",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 22,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.06.11",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1078.06.11",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 23,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1078.10.09",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1078.10.09",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 24,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1079.02.06",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1079.02.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 25,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1079.06.06",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1079.06.06",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 26,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1079.09.04",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1079.09.04",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 27,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1079.12.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1079.12.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 28,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1080.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1080.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 29,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1081.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1081.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 30,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1082.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1082.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 31,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1083.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1083.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 32,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1084.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1084.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 33,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1085.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1085.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 34,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1086.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1086.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 35,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1087.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1087.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 36,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1088.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1088.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 37,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1089.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1089.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 38,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1090.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1090.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 39,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1091.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1091.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 40,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1092.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1092.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 41,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1093.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1093.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 42,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1094.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1094.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 43,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "game_date": "1095.03.03",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1095.03.03",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303): the title has no holder",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": false,
+      "line_alive": true
+     }
+    },
+    "reward": 0.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 0.0
+    },
+    "step": 44,
+    "termination_reason": null,
+    "truncation_reason": null
+   },
+   {
+    "calls_naming_title": [
+     {
+      "game_date": "1096.02.16",
+      "intent": "mint_title",
+      "order_id": "mint_ireland",
+      "step": 45,
+      "tool": "do"
+     }
+    ],
+    "created": {
+     "by": "you: do mint_title at step 45",
+     "char_id": 36303,
+     "date": "1096.02.16",
+     "event": "created",
+     "read": "query(domain=title_history, title_id=461): the newest entry"
+    },
+    "game_date": "1096.02.16",
+    "metrics": {
+     "character_id": 36303,
+     "dynasty_id": 2044,
+     "dynasty_source": "query_character(36303) dynasty_id",
+     "game_date": "1096.02.16",
+     "line_status": "following",
+     "source": {
+      "dejure_counties": "inspect(subject=title, title_key=k_ireland, character_id=36303) summary.held (of 14)",
+      "holds_target_title": "inspect(subject=title_hierarchy, title_id=461, character_id=36303) title.holder_id 36303",
+      "line_alive": "query_character played_line.status"
+     },
+     "status": {
+      "dejure_counties": "ok",
+      "holds_target_title": "ok",
+      "line_alive": "ok"
+     },
+     "values": {
+      "dejure_counties": 9,
+      "holds_target_title": true,
+      "line_alive": true
+     }
+    },
+    "reward": 10.0,
+    "reward_terms": {
+     "dejure_counties_delta": 0.0,
+     "line_survival": 0.0,
+     "target_title_gained": 10.0
+    },
+    "step": 45,
+    "termination_reason": "goal_reached",
+    "truncation_reason": null
+   }
+  ],
+  "task": "munster1066-kingdom-30y-wake"
+ }
+}

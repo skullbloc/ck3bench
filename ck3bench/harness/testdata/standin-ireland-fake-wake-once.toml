@@ -1,0 +1,39 @@
+# A stand-in task for the harness's own tests and dry runs: the wake stand-in with the kingdom paid once (goal
+# kingdom_held_once), on the FAKE backend. Nothing here is the game: the fake backend's numbers below are made up.
+id = "standin-ireland-fake-wake-once"
+description = "DRY-RUN STAND-IN (WAKE, PAID ONCE): the Ireland task's seat (Murchad 31506, dublin), start and title on the fake backend. Nothing here is the game."
+backend = "fake"
+horizon_days = 1095
+cycle_days = 73
+goal = "kingdom_held_once"
+target_title = "k_ireland"
+tools = ["observe", "do", "declare_war", "pass_turn"]
+game_speed = 3
+status = "buildable_now"
+status_reason = "the fake backend is in-process and deterministic"
+
+[wake]
+check_days = 1
+max_days = 365
+forced = ["ruler_changed"]
+
+[start]
+date = "1066.09.15"
+
+[[seats]]
+name = "dublin"
+character_id = 31506
+
+[reward]
+team = "none"
+terms = [{ name = "dejure_counties_delta", weight = 1.0 },
+         { name = "target_title_first_gained", weight = 10.0 },
+         { name = "line_survival", weight = 5.0 }]
+
+[fake]
+counties = [1]
+gold = [100.0]
+prestige = [50.0]
+ages = [31]
+dejure = [1]
+dejure_total = 14

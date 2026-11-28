@@ -17,8 +17,9 @@ from ck3bench.env import baselines, calendar
 from ck3bench.env.errors import EnvRefusal
 from ck3bench.env.scenario import BUILTIN_DICTS, builtin
 
-YEARS_IN_ID = re.compile(r"-(\d+)y$")
-WORDS = {"One": 1, "Two": 2, "Three": 3, "Four": 4, "Five": 5, "Ten": 10, "Twenty": 20}
+YEARS_IN_ID = re.compile(r"-(\d+)y(?:-wake\d*)?$")   # a wake twin keeps its horizon in its id
+WORDS = {"One": 1, "Two": 2, "Three": 3, "Four": 4, "Five": 5, "Ten": 10, "Twenty": 20, "Twenty-five": 25,
+         "Thirty": 30}
 STEPS = re.compile(r"(\d+) steps of (\d+) (?:game-)?days")
 YEARS_WORD = re.compile(r"\b(" + "|".join(WORDS) + r") game-years?\b")
 SPREAD = re.compile(r"read (\d+) to (\d+) counties at (\d+) years from (\d+)")

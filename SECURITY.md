@@ -9,13 +9,16 @@ and how to report a problem.
 
 | Version | Supported |
 |---------|-----------|
-| the latest commit on `main` (no release has been cut yet) | yes |
+| the latest release and the latest commit on `main` | yes |
 | anything older | no: update |
 
-In scope: the `ck3bench` package and CLI, the environment server, the shipped
-baseline file, and this repository's CI workflow. The game, the model and the agent that plays
-are ck3agent's: report those to
+In scope: the `ck3bench` package and CLI, the environment server, the
+research harness (`ck3bench.harness`: the seat runner, the series steps, the
+reference series driver and the scorer), the shipped baseline file, and this
+repository's CI workflow. The game-side toolkit (its MCP server and the
+bridge loaded into the game) is ck3agent's: report those to
 [ck3agent](https://github.com/skullbloc/ck3agent/security/advisories/new).
+The agent CLI and the model are their vendors'.
 
 ## Threat model
 
@@ -32,7 +35,37 @@ are ck3agent's: report those to
   and baseline files with `json`; nothing in them is executed. Every key is
   typed; an unknown key is refused.
 - **No secrets.** ck3bench reads no API key; a policy that calls a model holds
-  its own credentials.
+  its own credentials. The seat runner reads no credential: the agent CLI it
+  starts uses its own login, and the session's environment keeps only `HOME`,
+  `PATH`, the locale, `TERM`, the user name, `XDG_RUNTIME_DIR`, `TMPDIR` and the
+  names you pass with `--session-env`.
+- **The harness starts an agent CLI that acts without asking.** `run-seat`
+  starts the agent CLI (Claude Code's `claude` by default, or the command you
+  give `--claude`) once per turn with `--permission-mode dontAsk`, no built-in
+  tools (`--tools ""`), only the seat's MCP shim (`--strict-mcp-config`,
+  `--allowedTools` naming only the shim's tools), only the `local` settings
+  source, in an empty working directory under the run directory. Its tool
+  calls act on the game the episode runs; nothing asks you first. Review the
+  command you pass as `--claude` (or `RATE_CLAUDE_BIN` / `--agent-cli`), and
+  run it as a user whose files you do not mind the CLI being able to read.
+- **The harness runs commands you configure.** `run-seat --before-turns CMD`
+  runs CMD (the run directory appended); a series' watch step runs
+  `RATE_HOLD_CHECK` (split on spaces, the run directory appended) and, for the
+  final save, `bash RATE_UI ...` with click and key arguments; the reference
+  driver runs the harness's own steps as child processes with your
+  environment. Each runs with your user's rights and is not sandboxed: set
+  only commands you have read. `--config FILE` is read as TOML data, never
+  executed.
+- **What the harness writes.** Everything under the run directory (mode 700,
+  the runner's umask 077), the series ledger, and the reference driver's lock
+  directory. The protected-directory digest (`RATE_PROTECTED_DIR`) only reads
+  that directory. `run.json` records the machine's host name, and the
+  transcript the agent CLI's account and rate-limit events; `series publish`
+  writes a copy with the fields and the text it has rules for rewritten, and
+  refuses to write one in which a pattern of its refusal list survives
+  (docs/harness.md, "Publishing a run directory", lists both and what no rule
+  catches). The rewrite is a floor, not a review: a person reads every copy
+  before it is released.
 - **CI.** The workflow runs with a read-only token, uses no repository
   secrets and no self-hosted runner, and pins every action by commit sha.
 

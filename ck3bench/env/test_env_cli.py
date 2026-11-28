@@ -4,18 +4,28 @@ from __future__ import annotations
 import json
 
 from ck3bench.env import cli
-from ck3bench.env.scenario import BUILTIN_DICTS, STATUSES
+from ck3bench.env.scenario import BUILTIN_DICTS
 
 
 def _rows(out):
     return [json.loads(x) for x in out.strip().splitlines()]
 
 
-def test_scenarios_lists_every_builtin_with_its_status(capsys):
+def test_scenarios_lists_every_builtin_with_whether_you_can_obtain_its_start(capsys):
+    """Each row says how its start is had and whether a user can run it: a task whose save is declared by its
+    sha256 (nothing ships a save, and such a file cannot be made again) is not runnable by you; a game task on your
+    own save is, and so is a fake task. No row carries the declaration's constant status, which says neither."""
+    from ck3bench.env.scenario import START_NONE, START_NOT_OBTAINABLE, START_YOURS, resolve
     assert cli.main(["scenarios"]) == cli.EXIT_OK
     rows = _rows(capsys.readouterr().out)
     assert {r["id"] for r in rows} == set(BUILTIN_DICTS)
-    assert all(r["status"] in STATUSES and r["why"] for r in rows)
+    assert all(r["why"] and "status" not in r for r in rows)
+    for r in rows:
+        sc = resolve(r["id"])
+        want = (START_NONE, True) if sc.backend != "ck3" else (START_YOURS, True) if sc.start_save_sha256 is None \
+            else (START_NOT_OBTAINABLE, False)
+        assert (r["start"], r["runnable_by_you"]) == want, r
+    assert sum(not r["runnable_by_you"] for r in rows) == 8 and sum(r["start"] == START_NONE for r in rows) == 5
 
 
 def test_run_on_the_fake_backend_with_each_policy(tmp_path, capsys):
@@ -149,3 +159,38 @@ def test_shim_hands_its_arguments_to_the_mcp_shim(monkeypatch):
     monkeypatch.setattr(mcp_shim, "main", lambda argv: seen.append(argv) or 0)
     assert cli.main(["shim", "--url", "http://127.0.0.1:9", "--seat", "king", "--step-wait-s", "900"]) == 0
     assert seen == [["--url", "http://127.0.0.1:9", "--seat", "king", "--step-wait-s", "900.0"]]
+
+
+def test_play_holds_the_world_open_after_the_episode_before_closing_it(monkeypatch, capsys):
+    """--hold-before-close-s keeps the finished episode's world up (a screen recording keeps the final
+    state) and closes it after; the result line is printed before the hold."""
+    import time
+    from ck3bench.env import fake
+    closed_at: list[float] = []
+    real_close = fake.FakeBackend.close
+    monkeypatch.setattr(fake.FakeBackend, "close", lambda self: (closed_at.append(time.monotonic()),
+                                                                 real_close(self))[1])
+    t0 = time.monotonic()
+    rc = cli.main(["play", "fake-solo", "--seed", "1", "--seat", "king=noop", "--turn-timeout-s", "10",
+                   "--hold-before-close-s", "0.6"])
+    line = json.loads(capsys.readouterr().out.strip().splitlines()[0])
+    assert rc == 0 and line["end_reason"] == "horizon"
+    assert closed_at and closed_at[0] - t0 >= 0.6
+
+
+def test_a_game_speed_declared_on_the_command_line_replaces_the_scenarios(tmp_path, capsys):
+    from ck3bench.env.trajectory import check_trajectory, read_trajectory
+    out = tmp_path / "run.jsonl"
+    assert cli.main(["run", "fake-solo", "--seed", "1", "--policy", "noop", "--out", str(out),
+                     "--game-speed", "5"]) == cli.EXIT_OK
+    recs = read_trajectory(out)
+    assert recs[0]["scenario"]["game_speed"] == 5 and check_trajectory(recs) == []
+    # the fake reads no clock: the step says so, never `agreed`
+    assert {r["advance"]["speed"]["status"] for r in recs if r["kind"] == "step"} == {"not_reported"}
+    out2 = tmp_path / "run2.jsonl"
+    assert cli.main(["run", "fake-solo", "--seed", "1", "--policy", "noop", "--out", str(out2)]) == cli.EXIT_OK
+    assert read_trajectory(out2)[0]["scenario"]["game_speed"] == BUILTIN_DICTS["fake-solo"]["game_speed"]
+    capsys.readouterr()
+    assert cli.main(["run", "fake-solo", "--seed", "1", "--policy", "noop", "--game-speed", "6"]) \
+        == cli.EXIT_REFUSED
+    assert "game_speed 6 not in 1..5" in capsys.readouterr().out

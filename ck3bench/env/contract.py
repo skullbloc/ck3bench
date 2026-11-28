@@ -52,6 +52,16 @@ def check_horizon(env, steps: int, last_infos: Mapping[str, dict]) -> None:
                for i in last_infos.values())
 
 
+def check_wake_horizon(env, last_obs: Mapping[str, dict], last_infos: Mapping[str, dict]) -> None:
+    """A WAKE task that ran to its horizon ended on the scenario's end date (its step
+    count is the world's, not n_steps), truncated `horizon`."""
+    assert env.scenario.wake is not None, "a wake task"
+    assert all(o["game_date"] == env.scenario.end_date for o in last_obs.values()), \
+        f"ended {[o['game_date'] for o in last_obs.values()]}, the scenario ends {env.scenario.end_date}"
+    assert all(i.get("truncation_reason") == TRUNC_HORIZON or i.get("termination_reason")
+               for i in last_infos.values())
+
+
 def drive(env, seed: int, actions_for=lambda env, obs: {s: [] for s in env.agents}) -> dict:
     """Run one episode under the contract checks; returns what happened."""
     out = env.reset(seed=seed)

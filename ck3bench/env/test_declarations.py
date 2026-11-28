@@ -85,11 +85,28 @@ def test_every_builtin_loads_and_round_trips_through_the_one_reader(name):
     assert s.status in STATUSES and s.status_reason
 
 
-def test_the_short_ck3_tasks_are_declared_with_their_status():
-    ck3 = {n: builtin(n) for n in BUILTIN_DICTS if builtin(n).backend == "ck3"}
-    assert 3 <= len(ck3) <= 5
-    assert {n for n, s in ck3.items() if s.status == "buildable_now"} >= {"france1066-treasury-2y"}
-    assert all(s.horizon_days <= 3650 for s in ck3.values()), "short tasks: ten game-years at most"
+def test_the_ck3_tasks_are_declared_with_their_status():
+    ck3 = {n: builtin(n) for n in BUILTIN_DICTS if builtin(n).backend == "ck3" and builtin(n).outcome is None}
+    # + munster1066-kingdom-30y-wake (another seat, the same task), francia867-empire-40y-wake, + the two
+    # census-seat starts (test_holder_starts), + munster1066-kingdom-once-30y-wake (the kingdom paid once,
+    # test_once_goal), + the Carinthia line start (test_carinthia_start)
+    assert 3 <= len(ck3) <= 14
+    # the decision tasks start from a banked mid-game save, its sha256 declared, and run short
+    dec = {n: builtin(n) for n in BUILTIN_DICTS if builtin(n).outcome is not None}
+    assert dec and all(s.backend == "ck3" and s.start_save_sha256 and s.start_date > "1066.09.15"
+                       and s.horizon_days <= 5 * 365 for s in dec.values())
+    assert {n for n, s in ck3.items() if s.status == "buildable_now"} >= {"france1066-treasury-2y",
+                                                                           "ireland1066-kingdom-15y"}
+    long = {n for n, s in ck3.items() if s.horizon_days > 15 * 365}
+    # the 30-year task and its wake twins (same seat, start, goal, terms and end date; test_wake_ck3.py;
+    # and the 180-day maximum step, test_wake_ck3.py test_wake180_*)
+    assert long == {"ireland1066-kingdom-30y", "ireland1066-kingdom-30y-wake",
+                    "ireland1066-kingdom-30y-wake180", "munster1066-kingdom-30y-wake",
+                    "munster1066-kingdom-once-30y-wake", "francia867-empire-40y-wake",
+                    "sweden867-kingdom-20y-wake", "lorraine1066-line-25y-wake",
+                    "carinthia1066-line-25y-wake"}, \
+        "one task runs past fifteen game-years"
+    assert builtin("ireland1066-kingdom-30y").horizon_days == 150 * 73
     assert all(set(s.tools) <= set(PUBLIC_TOOLS) | {"msg_send", "note_read", "note_write"} for s in ck3.values())
 
 

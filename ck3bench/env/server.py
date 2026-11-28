@@ -8,8 +8,18 @@ drive the seats.
     GET  /observation?seat=S      seat S's current observation and the step now open
     POST /reset  {seed, options}  -> {observations, infos}
     POST /call   {seat, call}     -> {result}           one in-turn tool call, the game paused
-    POST /step   {actions, usage, turns} -> {observations, rewards, terminations, truncations, infos}
-    POST /submit {seat, action, usage, turn} -> {submitted, step, waiting_for, stepped}
+    POST /step   {actions, usage, turns, wake?} -> {observations, rewards, terminations, truncations, infos}
+    POST /submit {seat, action, usage, turn, wake?, notes?, orders?} -> {submitted, step, waiting_for, stepped}
+
+`wake` (a wake task only, wake.py): /step's is per seat, /submit's is the seat's own
+{max_days, when}; checked at /submit, so a malformed one is refused to the seat that sent it.
+`notes` (a run that keeps carried notes pads, env.py notes_pad_bytes): the seat's whole pad,
+written at /submit; over the bound it is refused (`notes_too_long`) and the turn stays open, unless the submit
+says `notes_if_refused: "end_turn"` (the seat shim in ack mode): then nothing is written, the turn ends, and the
+seat's next observation says so (`notes_pad.unwritten`); `notes_unwritten` {code, why} likewise records a pad patch
+the shim could not apply.
+`orders` (a wake task with standing orders on, orders.py): /step's is per seat, /submit's the seat's own
+list; checked at /submit like `wake`, so a refused order is refused to its seat and its turn stays open.
     POST /await  {step, seat?, timeout_s} -> the step's result (the seat's slice when seat is given)
     POST /close                   -> {}
 
@@ -54,7 +64,9 @@ from .types import parse_action
 LOOPBACK = ("127.0.0.1", "::1", "localhost")
 #: codes that are the caller's request, not the episode's state
 _BAD_REQUEST_CODES = {R_BAD_REQUEST, "action_malformed", "seed_not_an_int", "scenario_unknown",
-                      R_TURN_TIMEOUT_UNDECLARED}
+                      R_TURN_TIMEOUT_UNDECLARED, "wake_malformed", "notes_too_long", "notes_malformed",
+                      "notes_not_kept", "order_malformed", "order_lever_refused", "order_needs_confirm",
+                      "orders_not_declared"}
 
 
 #: The longest single /await wait; a longer timeout_s is refused, not cut.
@@ -137,17 +149,21 @@ class EnvServer:
         for s in self.env.agents:
             if s not in self._subs:
                 self._subs[s] = {"action": [], "usage": None,
-                                 "turn": {"status": "timeout", "by": "server", "timeout_s": self.turn_timeout_s}}
+                                 "turn": {"status": "timeout", "by": "server", "timeout_s": self.turn_timeout_s},
+                                 "wake": None, "orders": None}
         return self._run_submitted()
 
     def _run_submitted(self) -> dict:
         subs, self._subs = self._subs, {}
         step_no = self.env.steps_done + 1
+        wake = {s: d["wake"] for s, d in subs.items() if d.get("wake") is not None}
+        orders = {s: d["orders"] for s, d in subs.items() if d.get("orders") is not None}
         try:
             obs, r, te, tr, infos = self.env.step(
                 {s: subs[s]["action"] for s in self.env.agents},
                 usage={s: d["usage"] for s, d in subs.items() if d.get("usage")} or None,
-                turns={s: d["turn"] for s, d in subs.items() if d.get("turn")} or None)
+                turns={s: d["turn"] for s, d in subs.items() if d.get("turn")} or None,
+                **({"wake": wake} if wake else {}), **({"orders": orders} if orders else {}))
             res = {"ok": True, "observations": obs, "rewards": r, "terminations": te, "truncations": tr,
                    "infos": infos}
         except EnvRefusal as e:
@@ -214,7 +230,10 @@ class EnvServer:
                     raise EnvRefusal(R_SUBMISSIONS_PENDING, f"{sorted(self._subs)} submitted through /submit; "
                                                             "a direct /step would drop them", "server")
                 obs, r, te, tr, infos = env.step(body["actions"], usage=body.get("usage"),
-                                                 turns=body.get("turns"))
+                                                 turns=body.get("turns"),
+                                                 **({"wake": body["wake"]} if body.get("wake") is not None else {}),
+                                                 **({"orders": body["orders"]} if body.get("orders") is not None
+                                                    else {}))
                 self._results[env.steps_done] = {"ok": True, "observations": obs, "rewards": r,
                                                  "terminations": te, "truncations": tr, "infos": infos}
                 self._arm()
@@ -252,14 +271,45 @@ class EnvServer:
             if body.get(k) is not None and not isinstance(body[k], dict):
                 raise EnvRefusal(R_BAD_REQUEST, f"/submit {k} must be an object", "server")
         action = [c.to_dict() for c in parse_action(body["action"])]
+        wake = body.get("wake")
+        if wake is not None:
+            env.check_wake(seat, wake)       # refused to this seat now, not to every seat at the step
+        orders = body.get("orders")
+        order_notes = None
+        if orders is not None:
+            parsed = env.check_orders(seat, orders)   # likewise: a refused order is this seat's, its turn still open
+            # an order that mints a title on a gold threshold: the price read, beside the threshold
+            order_notes = env.order_notes(seat, parsed) if callable(getattr(env, "order_notes", None)) else None
+        unwritten = None
+        if body.get("notes_unwritten") is not None:
+            # the shim could not apply the seat's notes_edit (a refused pad would otherwise cost a second call);
+            # the turn ends with the pad unchanged and the next observation says so
+            nu = body["notes_unwritten"]
+            if not isinstance(nu, dict) or not isinstance(nu.get("why"), str):
+                raise EnvRefusal(R_BAD_REQUEST, "/submit notes_unwritten is {code, why}", "server")
+            unwritten = env.note_unwritten(seat, str(nu.get("code") or "notes_edit_refused"), nu["why"])
+        elif body.get("notes") is not None:
+            if body.get("notes_if_refused") == "end_turn":
+                try:
+                    env.write_notes(seat, body["notes"])
+                except EnvRefusal as e:        # over the bound: nothing written, and the turn still ends
+                    if e.code not in ("notes_too_long", "notes_malformed"):
+                        raise
+                    unwritten = env.note_unwritten(seat, e.code, e.detail, recorded=True)
+            else:
+                env.write_notes(seat, body["notes"])   # the carried pad; refused to this seat, its turn still open
         step_no = env.steps_done + 1
-        self._subs[seat] = {"action": action, "usage": body.get("usage"), "turn": body.get("turn")}
+        self._subs[seat] = {"action": action, "usage": body.get("usage"), "turn": body.get("turn"), "wake": wake,
+                            **({"orders": orders} if orders is not None else {})}
         waiting = [s for s in env.agents if s not in self._subs]
+        nu = {"notes_unwritten": unwritten} if unwritten is not None else {}
+        if order_notes:
+            nu["order_notes"] = order_notes
         if waiting and self._expired_gen != self._gen:
-            return {"submitted": True, "step": step_no, "waiting_for": waiting, "stepped": False}
+            return {"submitted": True, "step": step_no, "waiting_for": waiting, "stepped": False, **nu}
         res = self._fill_and_run() if waiting else self._run_submitted()
         return {"submitted": True, "step": step_no, "waiting_for": [], "stepped": True,
-                **({"error": res} if not res.get("ok") else {})}
+                **({"error": res} if not res.get("ok") else {}), **nu}
 
     def _await(self, body: Mapping[str, Any]) -> dict[str, Any]:
         step_no, seat, t = body.get("step"), body.get("seat"), body.get("timeout_s")
@@ -354,8 +404,14 @@ class EnvClient:
                                                                   "arguments": arguments or {}}})["result"]
 
     def step(self, actions: Mapping[str, Any], usage: Optional[Mapping[str, Any]] = None,
-             turns: Optional[Mapping[str, Any]] = None):
-        out = self._req("POST", "/step", {"actions": actions, "usage": usage, "turns": turns})
+             turns: Optional[Mapping[str, Any]] = None, wake: Optional[Mapping[str, Any]] = None,
+             orders: Optional[Mapping[str, Any]] = None):
+        body = {"actions": actions, "usage": usage, "turns": turns}
+        if wake is not None:
+            body["wake"] = wake
+        if orders is not None:
+            body["orders"] = orders
+        out = self._req("POST", "/step", body)
         return out["observations"], out["rewards"], out["terminations"], out["truncations"], out["infos"]
 
     def observation(self, seat: str) -> dict:
@@ -364,8 +420,21 @@ class EnvClient:
     def tools(self, seat: str) -> list[dict]:
         return self._req("GET", "/tools?" + urllib.parse.urlencode({"seat": seat}))["tools"]
 
-    def submit(self, seat: str, action: Any, usage: Optional[dict] = None, turn: Optional[dict] = None) -> dict:
-        return self._req("POST", "/submit", {"seat": seat, "action": action, "usage": usage, "turn": turn})
+    def submit(self, seat: str, action: Any, usage: Optional[dict] = None, turn: Optional[dict] = None,
+               wake: Optional[dict] = None, notes: Optional[str] = None, orders: Optional[list] = None,
+               notes_if_refused: Optional[str] = None, notes_unwritten: Optional[dict] = None) -> dict:
+        body = {"seat": seat, "action": action, "usage": usage, "turn": turn}
+        if wake is not None:
+            body["wake"] = wake
+        if orders is not None:
+            body["orders"] = orders
+        if notes is not None:
+            body["notes"] = notes
+        if notes_if_refused is not None:
+            body["notes_if_refused"] = notes_if_refused
+        if notes_unwritten is not None:
+            body["notes_unwritten"] = notes_unwritten
+        return self._req("POST", "/submit", body)
 
     def await_step(self, step: int, seat: Optional[str] = None, timeout_s: float = 600.0) -> dict:
         return self._req("POST", "/await", {"step": step, "seat": seat, "timeout_s": timeout_s})

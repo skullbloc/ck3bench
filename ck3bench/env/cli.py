@@ -45,12 +45,13 @@ import json
 import signal
 import sys
 import threading
+import time
 from typing import Iterator, Optional
 
 from .env import ParallelEnv
 from .errors import R_BAD_REQUEST, R_STOPPED_BY_SIGNAL, EnvRefusal
 from .policy import POLICY_NAMES, make_policy, run_episode
-from .scenario import BUILTIN_DICTS, builtin, resolve
+from .scenario import BUILTIN_DICTS, builtin, resolve, start_availability
 from .trajectory import TrajectoryWriter, check_trajectory, read_trajectory
 
 EXIT_OK, EXIT_REFUSED, EXIT_BAD_TRAJECTORY = 0, 1, 3
@@ -135,8 +136,10 @@ def _backend_kwargs(a) -> dict:
 def cmd_scenarios(a) -> int:
     for name in sorted(BUILTIN_DICTS):
         s = builtin(name)
+        start, runnable = start_availability(s)
         print(json.dumps({"id": s.id, "backend": s.backend, "seats": list(s.seat_names), "steps": s.n_steps,
-                          "cycle_days": s.cycle_days, "status": s.status, "why": s.status_reason}))
+                          "cycle_days": s.cycle_days, "start": start, "runnable_by_you": runnable,
+                          "why": s.status_reason}))
     return EXIT_OK
 
 
@@ -144,7 +147,7 @@ def cmd_run(a) -> int:
     writer = TrajectoryWriter(a.out) if a.out else None
     env = None
     try:
-        env = ParallelEnv(a.scenario, trajectory=writer, **_backend_kwargs(a))
+        env = ParallelEnv(_scenario(a), trajectory=writer, **_backend_kwargs(a))
         pols = {s: make_policy(a.policy, a.seed + i, env.scenario) for i, s in enumerate(env.possible_agents)}
         res = run_episode(env, pols, seed=a.seed)
         print(json.dumps({"ok": True, **res, "scenario": env.scenario.id, "backend": env.backend.name,
@@ -169,7 +172,7 @@ def _serve(a) -> int:
     from .server import EnvServer
     writer = TrajectoryWriter(a.out) if a.out else None
     try:
-        env = ParallelEnv(a.scenario, trajectory=writer, **_backend_kwargs(a))
+        env = ParallelEnv(_scenario(a), trajectory=writer, notes_pad_bytes=a.notes_pad_bytes, **_backend_kwargs(a))
         srv = EnvServer(env, host=a.host, port=a.port, allow_remote=a.allow_remote,
                         turn_timeout_s=a.turn_timeout_s)
     except EnvRefusal as e:
@@ -217,6 +220,33 @@ def _seat_pairs(pairs: list[str]) -> dict[str, str]:
     return out
 
 
+def _seat_surface(a):
+    """--seat-surface: a JSON object (refused otherwise), or None when not given."""
+    raw = getattr(a, "seat_surface", None)
+    if raw is None:
+        return None
+    try:
+        v = json.loads(raw)
+    except ValueError as e:
+        raise EnvRefusal(R_BAD_REQUEST, f"--seat-surface is not JSON: {e}", "cli")
+    if not isinstance(v, dict):
+        raise EnvRefusal(R_BAD_REQUEST, "--seat-surface is a JSON object", "cli")
+    return v
+
+
+def _scenario(a):
+    """The scenario named, with `--game-speed` declared in place of its own speed when given (the same
+    reader checks it; the trajectory header carries the speed the run declared). A declared speed also
+    ALIGNS a wake task's checks (scenario.WakeDecl.aligned: the clock stops on each check date)."""
+    if getattr(a, "game_speed", None) is None:
+        return a.scenario
+    from .scenario import resolve, scenario_from_dict
+    d = dict(resolve(a.scenario).to_dict(), game_speed=a.game_speed)
+    if "wake" in d:
+        d["wake"] = dict(d["wake"], aligned_checks=True)
+    return scenario_from_dict(d)
+
+
 def cmd_play(a) -> int:
     with _stop_on_signals():
         return _play(a)
@@ -231,7 +261,8 @@ def _play(a) -> int:
             raise EnvRefusal(R_BAD_REQUEST, f"--turn-timeout-s {a.turn_timeout_s} must be > 0", "cli")
         seats = _seat_pairs(a.seat)
         writer = TrajectoryWriter(a.out) if a.out else None
-        env = ParallelEnv(a.scenario, trajectory=writer, **_backend_kwargs(a))
+        env = ParallelEnv(_scenario(a), trajectory=writer, notes_pad_bytes=a.notes_pad_bytes,
+                          seat_surface=_seat_surface(a), **_backend_kwargs(a))
         order = list(env.possible_agents)
         pols = {s: _play_policy(p, a.seed + (order.index(s) if s in order else 0), a, env.scenario)
                 for s, p in seats.items()}
@@ -249,6 +280,10 @@ def _play(a) -> int:
                           "external": a.external, "runner_timeouts": timeouts, "scenario": env.scenario.id,
                           "backend": env.backend.name, "fake": env.backend.fake, "trajectory": a.out},
                          allow_nan=True))
+        if a.hold_before_close_s > 0:
+            # the episode is over and recorded; the game stays up, paused, before the close (a screen
+            # recording keeps the final state); a stop signal still ends it at once
+            time.sleep(a.hold_before_close_s)
         return EXIT_OK
     except EnvRefusal as e:
         print(json.dumps(e.as_dict()))
@@ -270,7 +305,8 @@ def _play(a) -> int:
 
 def cmd_shim(a) -> int:
     from . import mcp_shim
-    return mcp_shim.main(["--url", a.url, "--seat", a.seat, "--step-wait-s", str(a.step_wait_s)])
+    return mcp_shim.main(["--url", a.url, "--seat", a.seat, "--step-wait-s", str(a.step_wait_s)]
+                         + (["--end-turn", a.end_turn] if a.end_turn != "observation" else []))
 
 
 def cmd_check(a) -> int:
@@ -280,8 +316,9 @@ def cmd_check(a) -> int:
         print(json.dumps({"ok": False, "problems": [str(e)]}))
         return EXIT_BAD_TRAJECTORY
     problems = check_trajectory(recs)
+    from .trajectory import summary
     print(json.dumps({"ok": not problems, "records": len(recs), "problems": problems,
-                      "fake": sorted({bool(r.get("fake")) for r in recs})}))
+                      "fake": sorted({bool(r.get("fake")) for r in recs}), "episodes": summary(recs)}))
     return EXIT_OK if not problems else EXIT_BAD_TRAJECTORY
 
 
@@ -313,6 +350,11 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
         s.add_argument("--saves-dir", default=None, help="where your own CK3 saves are (ck3 scenarios)")
         s.add_argument("--instance-id", default=None, help="CK3_INSTANCE_ID for this game (ck3 scenarios)")
         s.add_argument("--out", default=None, help="write the trajectory JSONL here")
+        s.add_argument("--game-speed", type=int, default=None,
+                       help="declare this game speed (1..5) in place of the scenario's own; the game is set to it "
+                            "at open and read back at every step (a different reading is a mismatch the trajectory "
+                            "check names); on a wake task it also aligns the checks: the clock stops on each check "
+                            "date and the step records each check's intended date beside the date read")
         if name == "run":
             s.add_argument("--seed", type=int, required=True)
             s.add_argument("--policy", choices=POLICY_NAMES, required=True)
@@ -320,14 +362,24 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
             s.add_argument("--host", default="127.0.0.1")
             s.add_argument("--port", type=int, default=8770 if name == "serve" else 0)
             s.add_argument("--allow-remote", action="store_true")
+        if name in ("serve", "play"):
+            s.add_argument("--notes-pad-bytes", type=int, default=None,
+                           help="keep a carried notes pad of this many bytes per seat (written with end_turn's "
+                                "notes, shown in the next observation, recorded at every step; for a new session "
+                                "every turn); unset: none")
         if name == "serve":
             s.add_argument("--turn-timeout-s", type=float, default=None,
                            help="the step's deadline for per-seat /submit (required for /submit: a seat that has "
                                 "not submitted by then is stepped with [] and a typed timeout record)")
         if name == "play":
+            s.add_argument("--seat-surface", default=None, metavar="JSON",
+                           help="the seat surface the runner declared (its switches), a JSON "
+                                "object written as the trajectory header's `seat_surface`; unset: no such key")
             s.add_argument("--seed", type=int, required=True)
             s.add_argument("--seat", action="append", default=[], metavar="SEAT=POLICY",
                            help=f"one per seat the runner drives; POLICY one of {list(PLAY_POLICIES)}")
+            s.add_argument("--hold-before-close-s", type=float, default=0.0,
+                           help="after the episode ends, keep the game up (paused) this long before closing it")
             s.add_argument("--external", action="append", default=[], metavar="SEAT",
                            help="a seat driven from outside (ck3bench env shim); repeatable")
             s.add_argument("--turn-timeout-s", type=float, required=True,
@@ -340,6 +392,10 @@ def add_arguments(p: argparse.ArgumentParser) -> None:
     sh.add_argument("--seat", required=True)
     sh.add_argument("--step-wait-s", type=float, required=True,
                     help="how long end_turn waits for the step to run before answering step_pending")
+    sh.add_argument("--end-turn", choices=("observation", "ack"), default="observation",
+                    help="observation (default): end_turn waits for the step and returns the next observation; "
+                         "ack: end_turn submits (with the seat's notes) and returns only an acknowledgement, and "
+                         "the session takes no further call (one turn per session, a new session every turn)")
     sh.set_defaults(env_fn=cmd_shim)
     c = sub.add_parser("check", help="check a trajectory file's shape")
     c.add_argument("trajectory")

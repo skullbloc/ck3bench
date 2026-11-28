@@ -1,10 +1,10 @@
-"""Bounds read on a live game (CK3 1.18.3.1, ck3agent 2026.12.11), held in the code.
+"""Bounds read on a live game (CK3 1.18.3.1), held in the code.
 
-* The bridge's fastest reachable speed is 3 (`set_speed 4` writes 3): every
-  built-in declares a reachable speed, and the scenario reader refuses an
-  unreachable one when the declaration is READ, before anything is launched,
-  naming the bound and where it was measured. Wall-time estimates in a task's
-  text are computed from the measured rates.
+* Game speeds 1 to 5 load (the bridge writes a speed above 3 only when the
+  episode declares it); every built-in declares speed 3, and a speed outside
+  the game is refused when the declaration is READ, before anything is
+  launched. Wall-time estimates in a task's text are computed from the
+  measured rates (speeds 2 and 3; any other is refused, not guessed).
 * No shipped policy emits a call the toolkit refuses: every tool name and
   argument a shipped policy emits on a game task validates against the
   toolkit's OWN schemas (its registered tool definitions and the `do` tool's
@@ -36,39 +36,35 @@ from ck3bench.env.types import (DIAG_NOT_APPLICABLE, DIAG_NOT_REPORTED, DIAG_REP
                                 ToolCall, ToolResult)
 
 PKG = Path(__file__).resolve().parent
-REPO = PKG.parents[1]
 
 
-# ── a reachable game speed (speed 4 read back 3 live) ─────────────────────────────────────────────
+# ── a reachable game speed (a declared 4 or 5 lifts the bridge's write ceiling) ──────────────────────
 
-def test_every_builtin_declares_a_reachable_speed():
-    bad = {n: d["game_speed"] for n, d in scn.BUILTIN_DICTS.items() if d["game_speed"] > scn.MAX_GAME_SPEED}
+def test_every_builtin_declares_the_default_speed():
+    bad = {n: d["game_speed"] for n, d in scn.BUILTIN_DICTS.items() if d["game_speed"] != scn.DEFAULT_GAME_SPEED}
     assert bad == {}
-    assert scn.MAX_GAME_SPEED == 3
+    assert scn.DEFAULT_GAME_SPEED == 3 and scn.MAX_GAME_SPEED == 5
 
 
-@pytest.mark.parametrize("speed", [4, 5])
-def test_an_unreachable_speed_is_refused_when_the_declaration_is_read(speed, tmp_path):
-    d = dict(scn.BUILTIN_DICTS["france1066-treasury-2y"], game_speed=speed)
-    with pytest.raises(EnvRefusal) as e:
-        scn.scenario_from_dict(d)
-    assert e.value.code == scn.R_SCENARIO_SPEED
-    assert "3" in e.value.detail and "measured" in e.value.detail and f"{speed}" in e.value.detail
-    # the TOML route is the same reader: refused at load, so no backend is ever made
+@pytest.mark.parametrize("speed", [1, 2, 3, 4, 5])
+def test_every_game_speed_loads(speed, tmp_path):
+    assert scn.scenario_from_dict(dict(scn.BUILTIN_DICTS["france1066-treasury-2y"], game_speed=speed)).game_speed \
+        == speed
+    # the TOML route is the same reader
     p = tmp_path / "s.toml"
     p.write_text('id = "t"\ndescription = "d"\nbackend = "ck3"\ntools = ["observe"]\n'
                  f'game_speed = {speed}\nstatus = "buildable_now"\nstatus_reason = "r"\n'
                  'horizon_days = 30\ncycle_days = 30\n[start]\nsave = "x.ck3"\ndate = "1066.09.15"\n'
                  '[[seats]]\nname = "king"\ncharacter_id = 1\n[reward]\nterms = [{name = "gold_delta", weight = 1.0}]\n',
                  encoding="utf-8")
-    with pytest.raises(EnvRefusal) as e2:
-        ParallelEnv(str(p), saves_dir=str(tmp_path))
-    assert e2.value.code == scn.R_SCENARIO_SPEED
+    assert scn.load_scenario(str(p)).game_speed == speed
 
 
-def test_reachable_speeds_load():
-    for s in (1, 2, 3):
-        assert scn.scenario_from_dict(dict(scn.BUILTIN_DICTS["france1066-treasury-2y"], game_speed=s)).game_speed == s
+@pytest.mark.parametrize("speed", [0, 6])
+def test_a_speed_outside_the_game_is_refused_when_the_declaration_is_read(speed):
+    with pytest.raises(EnvRefusal) as e:
+        scn.scenario_from_dict(dict(scn.BUILTIN_DICTS["france1066-treasury-2y"], game_speed=speed))
+    assert e.value.code == scn.R_SCENARIO_VALUE and f"{speed}" in e.value.detail
 
 
 WALL = re.compile(r"about (\d+) wall-minutes of clock at speed (\d)")
@@ -111,18 +107,16 @@ print(json.dumps({"tools": tools, "intent_args": table}))
 @pytest.fixture(scope="module")
 def toolkit():
     """The toolkit's own tool schemas and `do` argument table, read from its
-    code in a child process: this tree's source, else the installed wheel."""
-    tree = REPO / "ck3agent"
-    if (tree / "server" / "mcp_server.py").is_file():
-        src = str(tree)
-    else:
-        import importlib.util
-        if importlib.util.find_spec("ck3agent") is None:
-            pytest.skip("the toolkit is neither in this tree nor installed")
-        src = ""
+    code in a child process: the importable ck3agent package's (toolkit_source.py)."""
+    from ck3bench.env import toolkit_source
+    d, why = toolkit_source.server_importable()
+    if d is None:
+        pytest.skip(why)
+    pytest.importorskip("jsonschema", reason="the toolkit's `jsonschema` dependency is not installed here")
+    src = str(d.parent)
     env = {k: v for k, v in os.environ.items() if not k.startswith("CK3_")}
     out = subprocess.run([sys.executable, "-c", _SCHEMA_PROBE, src], capture_output=True, text=True,
-                         timeout=300, env=env, cwd=REPO if src else None)
+                         timeout=300, env=env, cwd=str(d.parent))
     assert out.returncode == 0, out.stderr[-800:]
     doc = json.loads(out.stdout.strip().splitlines()[-1])
     assert len(doc["tools"]) == 13 and doc["intent_args"], doc.keys()

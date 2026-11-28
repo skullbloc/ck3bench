@@ -1,0 +1,29 @@
+# The build this version of the bench is pinned to. tests/test_build_pins.py recomputes every value from the code
+# (docs/harness.md, "The pinned build"); a run's own records name the build it was played on.
+
+[toolkit]
+version = "2026.12.12"
+# the wheel's members digest (ck3bench/env/toolkit_id.py)
+members_sha256 = "eb2ea58fcd04857f5254181b2e9191c6ce04c5f745c93300832afcc50a4f747c"
+# the literal keys its server modules can write into a reply (ck3bench/env/toolkit_source.py)
+reply_keys_sha256 = "fc2a438e7d408cfbf7bd9a2471b4aa6a76c039a9634ddb9c8f5fa0423c88e694"
+# its registered tools as JSON with sorted keys: the bridge switches unset, and with the army switches set
+tool_listing_sha256 = "7dc1e47628312e8a0e4997546ba0f336f35998a8e95d91ab4e03dae777d40aa7"
+tool_listing_army_switches_sha256 = "ed6acd1bc41c97922a7f242071b73de4c506fd3887967154c01f56b13f5a5930"
+# the source files a bridge build compiles, read from a toolkit checkout
+bridge_source_sha256 = "70c43bc2dcc222ccfb83755c83069cec921dd711dd3a438041d2678c8399075f"
+
+[task.munster1066-kingdom-once-30y-wake]
+# the rendered seat prompt, and the version of the notes set it is served
+seat_prompt_sha256 = "181b087195ee7c4484a53a11349da6d9b1ac1038e58b7ff7918ea06658b1f601"
+notes_version = "b26b0c6df8b5"
+
+[bench]
+# this package's parts that decide what a seat is told
+goal_line_module = "e36e8554257e4d6ab9dee53bde1f7125afc260d4cfcf3ef42d88a420b699b128"
+orders_module = "97ee037d217af9434915a0bca7d9bb98428ec8a43f0c0e6d666188e5358ae638"
+mcp_shim_module = "e7c9b901896ab6a354b67354b033f6092f4078f63fb1e8e09a92030b94088d36"
+observation_builders = "4ba4ec6ee171742d5cfc1f18b303eaa9b45ac221e9a5657df5dd9746c284dc69"
+end_turn_ack_builders = "ff37470c686f3c0b978dc7bb14def8192c3a4e039c3277ad2c07289bcc029696"
+ck3_module = "10443855d56a65a23dbdaebf807301af49c99ea0f1d2c49476b104ce83434dbe"
+runner_turn_message = "629c4780af7e49a9e931999908f783d19a099c13390a76877cf0f5608f0a50ac"

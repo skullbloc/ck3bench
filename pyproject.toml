@@ -22,10 +22,9 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
-  "Private :: Do Not Upload",
 ]
 dependencies = [
-  "ck3agent==2026.12.11",
+  "ck3agent==2026.12.12",
 ]
 
 [project.optional-dependencies]
@@ -45,10 +44,11 @@ path = "ck3bench/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["ck3bench"]
-exclude = ["**/test_*.py", "**/__pycache__", "**/*.local.toml"]
+exclude = ["**/test_*.py", "**/__pycache__", "**/*.local.toml",
+           "ck3bench/env/toolkit_source.py"]   # test support: reads a toolkit checkout (the tests run from the tree)
 
 [tool.hatch.build.targets.sdist]
-include = ["/ck3bench", "/tests", "/docs", "/README.md", "/LICENSE", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/SECURITY.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/VERSION", "/UPSTREAM"]
+include = ["/ck3bench", "/tests", "/docs", "/README.md", "/BUILD_PINS.toml", "/LICENSE", "/NOTICE", "/CITATION.cff", "/CHANGELOG.md", "/SECURITY.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/VERSION", "/UPSTREAM"]
 exclude = ["**/__pycache__", "**/*.local.toml"]
 
 [tool.pytest.ini_options]

@@ -23,7 +23,7 @@
       "1066.09.15",
       "1166.09.15"
     ],
-    "run": "one game at a time from 2026-11-14 to 2026-11-17, except games 5 and 6, which ran at the same time on one host; each game recorded 1300 sample rows and no error row",
+    "run": "one game at a time, except games 5 and 6, which ran at the same time on one host; each game recorded 1300 sample rows and no error row",
     "wall_rate_game_days_per_s": {
       "1": 0.882,
       "2": 0.877,
